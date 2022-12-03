@@ -6,19 +6,20 @@ on:
       - master
   pull_request:
 
-    jobs:
-      deploy:
-        runs-on: ubuntu-22.04
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
         with:
-          submodules: true  # Fetch Hugo themes (true OR recursive)
+          submodules: false  # Fetch Hugo themes (true OR recursive)
           fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
-          hugo-version: 'latest'
+          hugo-version: '0.104.3'
+          extended: false
             # extended: true
 
       - name: Build
@@ -30,3 +31,4 @@ on:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
+

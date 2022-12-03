@@ -1,617 +1,338 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>
-  ECW 2021 - Chest · Valkheim’s personal website
-</title>
-    <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="color-scheme" content="light dark">
-
-
-
-
-<meta name="author" content="valkheim">
-<meta name="description" content="Chest was one of the reverse-engineering challenge of the European Cyber Week 2021 challenges. I’m the author of that AVR challenge and will detail here my solution.
+<!doctype html><html lang=en><head><title>ECW 2021 - Chest · Valkheim’s personal website</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="valkheim"><meta name=description content="Chest was one of the reverse-engineering challenge of the European Cyber Week 2021 challenges. I’m the author of that AVR challenge and will detail here my solution.
 The provided file chest.hex file is in Intel HEX format.
-1$ cat chest.hex 2:100000000C9434000C9449000C9449000C94490061 3:100010000C9449000C9449000C9449000C9449003C 4:100020000C9449000C9449000C9449000C9449002C 5:100030000C9449000C9449000C9449000C9449001C 6:100040000C9449000C9449000C9449000C9449000C 7:100050000C9449000C9449000C9449000C944900FC 8:100060000C9449000C94490011241FBECFEFD8E036 9:10007000DEBFCDBF11E0A0E0B1E0E8EAF1E002C0F0 10:1000800005900D92A632B107D9F70E94CA000C94D0 11:10009000D2000C9400001092C5008093C40088E147 12:1000A0008093C10086E08093C20008959091C000C3 13:1000B00095FFFCCF8093C60008950F931F93CF93B5 14:1000C000DF93EC018C01060F111DC017D10721F041 15:1000D00089910E945600F9CFDF91CF911F910F9126 16:1000E00008958091C00087FFFCCF8091C6000895DD 17:1000F0000F931F93CF93DF93EC018C01060F111D1B 18:10010000C017D10721F00E9471008993F9CFDF91C8 19:10011000CF911F910F910895CF93DF93CDB7DEB7A5 20:100120002B970FB6F894DEBF0FBECDBF8BE0EBE18F 21:10013000F1E0DE01119601900D928A95E1F76BE0F6 22:10014000CE0101960E945D000E9471002B960FB6B1 23:10015000F894DEBF0FBECDBFDF91CF910895FF921F 24:100160000F931F93CF93DF93F82EC0E0D1E00CE103 25:1001700011E0888184508F250E94560022960C172A 26:100180001D07B9F78AE0DF91CF911F910F91FF9082 27:100190000C94560087E60E944B000E948C000E943F 28:1001A000AF00FBCFF894FFCF4F5551505D62795DA2 29:1001B00073546F5770424355717A3E3842454378C5 30:0E01C000773300456E746572206B65790A0016 31:00000001FF The Intel HEX is a transitional file format for microcontrollers, (E)PROMs or other devices.">
-<meta name="keywords" content="blog,developer,personal">
-
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="ECW 2021 - Chest"/>
-<meta name="twitter:description" content="Chest was one of the reverse-engineering challenge of the European Cyber Week 2021 challenges. I’m the author of that AVR challenge and will detail here my solution.
+1$ cat chest.hex 2:100000000C9434000C9449000C9449000C94490061 3:100010000C9449000C9449000C9449000C9449003C 4:100020000C9449000C9449000C9449000C9449002C 5:100030000C9449000C9449000C9449000C9449001C 6:100040000C9449000C9449000C9449000C9449000C 7:100050000C9449000C9449000C9449000C944900FC 8:100060000C9449000C94490011241FBECFEFD8E036 9:10007000DEBFCDBF11E0A0E0B1E0E8EAF1E002C0F0 10:1000800005900D92A632B107D9F70E94CA000C94D0 11:10009000D2000C9400001092C5008093C40088E147 12:1000A0008093C10086E08093C20008959091C000C3 13:1000B00095FFFCCF8093C60008950F931F93CF93B5 14:1000C000DF93EC018C01060F111DC017D10721F041 15:1000D00089910E945600F9CFDF91CF911F910F9126 16:1000E00008958091C00087FFFCCF8091C6000895DD 17:1000F0000F931F93CF93DF93EC018C01060F111D1B 18:10010000C017D10721F00E9471008993F9CFDF91C8 19:10011000CF911F910F910895CF93DF93CDB7DEB7A5 20:100120002B970FB6F894DEBF0FBECDBF8BE0EBE18F 21:10013000F1E0DE01119601900D928A95E1F76BE0F6 22:10014000CE0101960E945D000E9471002B960FB6B1 23:10015000F894DEBF0FBECDBFDF91CF910895FF921F 24:100160000F931F93CF93DF93F82EC0E0D1E00CE103 25:1001700011E0888184508F250E94560022960C172A 26:100180001D07B9F78AE0DF91CF911F910F91FF9082 27:100190000C94560087E60E944B000E948C000E943F 28:1001A000AF00FBCFF894FFCF4F5551505D62795DA2 29:1001B00073546F5770424355717A3E3842454378C5 30:0E01C000773300456E746572206B65790A0016 31:00000001FF The Intel HEX is a transitional file format for microcontrollers, (E)PROMs or other devices."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="ECW 2021 - Chest"><meta name=twitter:description content="Chest was one of the reverse-engineering challenge of the European Cyber Week 2021 challenges. I’m the author of that AVR challenge and will detail here my solution.
 The provided file chest.hex file is in Intel HEX format.
-1$ cat chest.hex 2:100000000C9434000C9449000C9449000C94490061 3:100010000C9449000C9449000C9449000C9449003C 4:100020000C9449000C9449000C9449000C9449002C 5:100030000C9449000C9449000C9449000C9449001C 6:100040000C9449000C9449000C9449000C9449000C 7:100050000C9449000C9449000C9449000C944900FC 8:100060000C9449000C94490011241FBECFEFD8E036 9:10007000DEBFCDBF11E0A0E0B1E0E8EAF1E002C0F0 10:1000800005900D92A632B107D9F70E94CA000C94D0 11:10009000D2000C9400001092C5008093C40088E147 12:1000A0008093C10086E08093C20008959091C000C3 13:1000B00095FFFCCF8093C60008950F931F93CF93B5 14:1000C000DF93EC018C01060F111DC017D10721F041 15:1000D00089910E945600F9CFDF91CF911F910F9126 16:1000E00008958091C00087FFFCCF8091C6000895DD 17:1000F0000F931F93CF93DF93EC018C01060F111D1B 18:10010000C017D10721F00E9471008993F9CFDF91C8 19:10011000CF911F910F910895CF93DF93CDB7DEB7A5 20:100120002B970FB6F894DEBF0FBECDBF8BE0EBE18F 21:10013000F1E0DE01119601900D928A95E1F76BE0F6 22:10014000CE0101960E945D000E9471002B960FB6B1 23:10015000F894DEBF0FBECDBFDF91CF910895FF921F 24:100160000F931F93CF93DF93F82EC0E0D1E00CE103 25:1001700011E0888184508F250E94560022960C172A 26:100180001D07B9F78AE0DF91CF911F910F91FF9082 27:100190000C94560087E60E944B000E948C000E943F 28:1001A000AF00FBCFF894FFCF4F5551505D62795DA2 29:1001B00073546F5770424355717A3E3842454378C5 30:0E01C000773300456E746572206B65790A0016 31:00000001FF The Intel HEX is a transitional file format for microcontrollers, (E)PROMs or other devices."/>
-
-<meta property="og:title" content="ECW 2021 - Chest" />
-<meta property="og:description" content="Chest was one of the reverse-engineering challenge of the European Cyber Week 2021 challenges. I’m the author of that AVR challenge and will detail here my solution.
+1$ cat chest.hex 2:100000000C9434000C9449000C9449000C94490061 3:100010000C9449000C9449000C9449000C9449003C 4:100020000C9449000C9449000C9449000C9449002C 5:100030000C9449000C9449000C9449000C9449001C 6:100040000C9449000C9449000C9449000C9449000C 7:100050000C9449000C9449000C9449000C944900FC 8:100060000C9449000C94490011241FBECFEFD8E036 9:10007000DEBFCDBF11E0A0E0B1E0E8EAF1E002C0F0 10:1000800005900D92A632B107D9F70E94CA000C94D0 11:10009000D2000C9400001092C5008093C40088E147 12:1000A0008093C10086E08093C20008959091C000C3 13:1000B00095FFFCCF8093C60008950F931F93CF93B5 14:1000C000DF93EC018C01060F111DC017D10721F041 15:1000D00089910E945600F9CFDF91CF911F910F9126 16:1000E00008958091C00087FFFCCF8091C6000895DD 17:1000F0000F931F93CF93DF93EC018C01060F111D1B 18:10010000C017D10721F00E9471008993F9CFDF91C8 19:10011000CF911F910F910895CF93DF93CDB7DEB7A5 20:100120002B970FB6F894DEBF0FBECDBF8BE0EBE18F 21:10013000F1E0DE01119601900D928A95E1F76BE0F6 22:10014000CE0101960E945D000E9471002B960FB6B1 23:10015000F894DEBF0FBECDBFDF91CF910895FF921F 24:100160000F931F93CF93DF93F82EC0E0D1E00CE103 25:1001700011E0888184508F250E94560022960C172A 26:100180001D07B9F78AE0DF91CF911F910F91FF9082 27:100190000C94560087E60E944B000E948C000E943F 28:1001A000AF00FBCFF894FFCF4F5551505D62795DA2 29:1001B00073546F5770424355717A3E3842454378C5 30:0E01C000773300456E746572206B65790A0016 31:00000001FF The Intel HEX is a transitional file format for microcontrollers, (E)PROMs or other devices."><meta property="og:title" content="ECW 2021 - Chest"><meta property="og:description" content="Chest was one of the reverse-engineering challenge of the European Cyber Week 2021 challenges. I’m the author of that AVR challenge and will detail here my solution.
 The provided file chest.hex file is in Intel HEX format.
-1$ cat chest.hex 2:100000000C9434000C9449000C9449000C94490061 3:100010000C9449000C9449000C9449000C9449003C 4:100020000C9449000C9449000C9449000C9449002C 5:100030000C9449000C9449000C9449000C9449001C 6:100040000C9449000C9449000C9449000C9449000C 7:100050000C9449000C9449000C9449000C944900FC 8:100060000C9449000C94490011241FBECFEFD8E036 9:10007000DEBFCDBF11E0A0E0B1E0E8EAF1E002C0F0 10:1000800005900D92A632B107D9F70E94CA000C94D0 11:10009000D2000C9400001092C5008093C40088E147 12:1000A0008093C10086E08093C20008959091C000C3 13:1000B00095FFFCCF8093C60008950F931F93CF93B5 14:1000C000DF93EC018C01060F111DC017D10721F041 15:1000D00089910E945600F9CFDF91CF911F910F9126 16:1000E00008958091C00087FFFCCF8091C6000895DD 17:1000F0000F931F93CF93DF93EC018C01060F111D1B 18:10010000C017D10721F00E9471008993F9CFDF91C8 19:10011000CF911F910F910895CF93DF93CDB7DEB7A5 20:100120002B970FB6F894DEBF0FBECDBF8BE0EBE18F 21:10013000F1E0DE01119601900D928A95E1F76BE0F6 22:10014000CE0101960E945D000E9471002B960FB6B1 23:10015000F894DEBF0FBECDBFDF91CF910895FF921F 24:100160000F931F93CF93DF93F82EC0E0D1E00CE103 25:1001700011E0888184508F250E94560022960C172A 26:100180001D07B9F78AE0DF91CF911F910F91FF9082 27:100190000C94560087E60E944B000E948C000E943F 28:1001A000AF00FBCFF894FFCF4F5551505D62795DA2 29:1001B00073546F5770424355717A3E3842454378C5 30:0E01C000773300456E746572206B65790A0016 31:00000001FF The Intel HEX is a transitional file format for microcontrollers, (E)PROMs or other devices." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="http://www.example.com/posts/ecw-2021-chest/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2021-10-25T00:00:00+02:00" />
-<meta property="article:modified_time" content="2021-10-25T00:00:00+02:00" />
-<meta property="og:see_also" content="http://www.example.com/posts/ecw-2022-minifilter/" /><meta property="og:see_also" content="http://www.example.com/posts/ecw-2022-uefi/" />
-
-
-
-
-
-<link rel="canonical" href="http://www.example.com/posts/ecw-2021-chest/">
-
-
-<link rel="preload" href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as="font" type="font/woff2" crossorigin>
-
-
-  
-  
-  <link rel="stylesheet" href="/css/coder.min.c4d7e93a158eda5a65b3df343745d2092a0a1e2170feeec909b8a89443903c6a.css" integrity="sha256-xNfpOhWO2lpls980N0XSCSoKHiFw/u7JCbiolEOQPGo=" crossorigin="anonymous" media="screen" />
-
-
-
-
-
-
-  
-    
-    
-    <link rel="stylesheet" href="/css/coder-dark.min.78b5fe3864945faf5207fb8fe3ab2320d49c3365def0e88ac1df0ddadc54a03c.css" integrity="sha256-eLX&#43;OGSUX69SB/uP46sjINScM2Xe8OiKwd8N2txUoDw=" crossorigin="anonymous" media="screen" />
-  
-
-
-
- 
-
-
-
-
-<link rel="icon" type="image/png" href="/images/favicon-32x32.png" sizes="32x32">
-<link rel="icon" type="image/png" href="/images/favicon-16x16.png" sizes="16x16">
-
-<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-
-<link rel="manifest" href="/site.webmanifest">
-<link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#5bbad5">
-
-
-
-
-<meta name="generator" content="Hugo 0.104.3" />
-
-
-
-
-<link rel="stylesheet" href="http://www.example.comcss/custom.css">
-  </head>
-
-
-
-
-
-
-<body class="preload-transitions colorscheme-dark">
-  
-<div class="float-container">
-    <a id="dark-mode-toggle" class="colorscheme-toggle">
-        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
-    </a>
-</div>
-
-
-  <main class="wrapper">
-    <nav class="navigation">
-  <section class="container">
-    <a class="navigation-title" href="/">
-      Valkheim’s personal website
-    </a>
-    
-      <input type="checkbox" id="menu-toggle" />
-      <label class="menu-button float-right" for="menu-toggle">
-        <i class="fa fa-bars fa-fw" aria-hidden="true"></i>
-      </label>
-      <ul class="navigation-list">
-        
-          
-            <li class="navigation-item">
-              <a class="navigation-link" href="/about/">About</a>
-            </li>
-          
-            <li class="navigation-item">
-              <a class="navigation-link" href="/posts/">Blog</a>
-            </li>
-          
-            <li class="navigation-item">
-              <a class="navigation-link" href="/projects/">Projects</a>
-            </li>
-          
-        
-        
-      </ul>
-    
-  </section>
-</nav>
-
-
-    <div class="content">
-      
-  <section class="container post">
-    <article>
-      <header>
-        <div class="post-title">
-          <h1 class="title">
-            <a class="title-link" href="http://www.example.com/posts/ecw-2021-chest/">
-              ECW 2021 - Chest
-            </a>
-          </h1>
-        </div>
-        <div class="post-meta">
-          <div class="date">
-            <span class="posted-on">
-              <i class="fa fa-calendar" aria-hidden="true"></i>
-              <time datetime="2021-10-25T00:00:00&#43;02:00">
-                October 25, 2021
-              </time>
-            </span>
-            <span class="reading-time">
-              <i class="fa fa-clock-o" aria-hidden="true"></i>
-              13-minute read
-            </span>
-          </div>
-          
-          <div class="categories">
-  <i class="fa fa-folder" aria-hidden="true"></i>
-    <a href="/categories/ctf/">CTF</a></div>
-
-          <div class="tags">
-  <i class="fa fa-tag" aria-hidden="true"></i>
-    <span class="tag">
-      <a href="/tags/ctf/">CTF</a>
-    </span>
-      <span class="separator">•</span>
-    <span class="tag">
-      <a href="/tags/ecw/">ECW</a>
-    </span>
-      <span class="separator">•</span>
-    <span class="tag">
-      <a href="/tags/avr/">AVR</a>
-    </span></div>
-
-        </div>
-      </header>
-
-      <div>
-        
-        <p><strong>Chest</strong> was one of the reverse-engineering challenge of the <a href="https://www.european-cyber-week.eu/">European Cyber Week</a> 2021 challenges. I’m the author of that AVR challenge and will detail here my solution.</p>
-<p>The provided file <code>chest.hex</code> file is in <a href="https://www.intel.com/content/www/us/en/support/programmable/articles/000076770.html">Intel HEX format</a>.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-console" data-lang="console"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span>$ cat chest.hex
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>:100000000C9434000C9449000C9449000C94490061
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>:100010000C9449000C9449000C9449000C9449003C
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>:100020000C9449000C9449000C9449000C9449002C
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>:100030000C9449000C9449000C9449000C9449001C
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>:100040000C9449000C9449000C9449000C9449000C
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>:100050000C9449000C9449000C9449000C944900FC
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>:100060000C9449000C94490011241FBECFEFD8E036
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>:10007000DEBFCDBF11E0A0E0B1E0E8EAF1E002C0F0
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>:1000800005900D92A632B107D9F70E94CA000C94D0
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>:10009000D2000C9400001092C5008093C40088E147
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>:1000A0008093C10086E08093C20008959091C000C3
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>:1000B00095FFFCCF8093C60008950F931F93CF93B5
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>:1000C000DF93EC018C01060F111DC017D10721F041
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>:1000D00089910E945600F9CFDF91CF911F910F9126
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>:1000E00008958091C00087FFFCCF8091C6000895DD
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>:1000F0000F931F93CF93DF93EC018C01060F111D1B
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>:10010000C017D10721F00E9471008993F9CFDF91C8
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>:10011000CF911F910F910895CF93DF93CDB7DEB7A5
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>:100120002B970FB6F894DEBF0FBECDBF8BE0EBE18F
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span>:10013000F1E0DE01119601900D928A95E1F76BE0F6
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span>:10014000CE0101960E945D000E9471002B960FB6B1
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span>:10015000F894DEBF0FBECDBFDF91CF910895FF921F
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span>:100160000F931F93CF93DF93F82EC0E0D1E00CE103
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span>:1001700011E0888184508F250E94560022960C172A
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span>:100180001D07B9F78AE0DF91CF911F910F91FF9082
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span>:100190000C94560087E60E944B000E948C000E943F
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span>:1001A000AF00FBCFF894FFCF4F5551505D62795DA2
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span><span>:1001B00073546F5770424355717A3E3842454378C5
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span><span>:0E01C000773300456E746572206B65790A0016
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span><span>:00000001FF
+1$ cat chest.hex 2:100000000C9434000C9449000C9449000C94490061 3:100010000C9449000C9449000C9449000C9449003C 4:100020000C9449000C9449000C9449000C9449002C 5:100030000C9449000C9449000C9449000C9449001C 6:100040000C9449000C9449000C9449000C9449000C 7:100050000C9449000C9449000C9449000C944900FC 8:100060000C9449000C94490011241FBECFEFD8E036 9:10007000DEBFCDBF11E0A0E0B1E0E8EAF1E002C0F0 10:1000800005900D92A632B107D9F70E94CA000C94D0 11:10009000D2000C9400001092C5008093C40088E147 12:1000A0008093C10086E08093C20008959091C000C3 13:1000B00095FFFCCF8093C60008950F931F93CF93B5 14:1000C000DF93EC018C01060F111DC017D10721F041 15:1000D00089910E945600F9CFDF91CF911F910F9126 16:1000E00008958091C00087FFFCCF8091C6000895DD 17:1000F0000F931F93CF93DF93EC018C01060F111D1B 18:10010000C017D10721F00E9471008993F9CFDF91C8 19:10011000CF911F910F910895CF93DF93CDB7DEB7A5 20:100120002B970FB6F894DEBF0FBECDBF8BE0EBE18F 21:10013000F1E0DE01119601900D928A95E1F76BE0F6 22:10014000CE0101960E945D000E9471002B960FB6B1 23:10015000F894DEBF0FBECDBFDF91CF910895FF921F 24:100160000F931F93CF93DF93F82EC0E0D1E00CE103 25:1001700011E0888184508F250E94560022960C172A 26:100180001D07B9F78AE0DF91CF911F910F91FF9082 27:100190000C94560087E60E944B000E948C000E943F 28:1001A000AF00FBCFF894FFCF4F5551505D62795DA2 29:1001B00073546F5770424355717A3E3842454378C5 30:0E01C000773300456E746572206B65790A0016 31:00000001FF The Intel HEX is a transitional file format for microcontrollers, (E)PROMs or other devices."><meta property="og:type" content="article"><meta property="og:url" content="https://valkheim.github.io/posts/ecw-2021-chest/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-10-25T00:00:00+02:00"><meta property="article:modified_time" content="2021-10-25T00:00:00+02:00"><meta property="og:see_also" content="https://valkheim.github.io/posts/ecw-2022-crackme16/"><meta property="og:see_also" content="https://valkheim.github.io/posts/ecw-2022-minifilter/"><meta property="og:see_also" content="https://valkheim.github.io/posts/ecw-2022-uefi/"><link rel=canonical href=https://valkheim.github.io/posts/ecw-2021-chest/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.c4d7e93a158eda5a65b3df343745d2092a0a1e2170feeec909b8a89443903c6a.css integrity="sha256-xNfpOhWO2lpls980N0XSCSoKHiFw/u7JCbiolEOQPGo=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.78b5fe3864945faf5207fb8fe3ab2320d49c3365def0e88ac1df0ddadc54a03c.css integrity="sha256-eLX+OGSUX69SB/uP46sjINScM2Xe8OiKwd8N2txUoDw=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5><meta name=generator content="Hugo 0.104.3"><link rel=stylesheet href=https://valkheim.github.iocss/custom.css></head><body class="preload-transitions colorscheme-dark"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Valkheim’s personal website</a>
+<input type=checkbox id=menu-toggle>
+<label class="menu-button float-right" for=menu-toggle><i class="fa fa-bars fa-fw" aria-hidden=true></i></label><ul class=navigation-list><li class=navigation-item><a class=navigation-link href=/about/>About</a></li><li class=navigation-item><a class=navigation-link href=/posts/>Blog</a></li><li class=navigation-item><a class=navigation-link href=/projects/>Projects</a></li></ul></section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://valkheim.github.io/posts/ecw-2021-chest/>ECW 2021 - Chest</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2021-10-25T00:00:00+02:00>October 25, 2021</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+13-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/ctf/>CTF</a></div><div class=tags><i class="fa fa-tag" aria-hidden=true></i>
+<span class=tag><a href=/tags/ctf/>CTF</a></span>
+<span class=separator>•</span>
+<span class=tag><a href=/tags/ecw/>ECW</a></span>
+<span class=separator>•</span>
+<span class=tag><a href=/tags/avr/>AVR</a></span></div></div></header><div><p><strong>Chest</strong> was one of the reverse-engineering challenge of the <a href=https://www.european-cyber-week.eu/>European Cyber Week</a> 2021 challenges. I’m the author of that AVR challenge and will detail here my solution.</p><p>The provided file <code>chest.hex</code> file is in <a href=https://www.intel.com/content/www/us/en/support/programmable/articles/000076770.html>Intel HEX format</a>.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1</span><span>$ cat chest.hex
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2</span><span>:100000000C9434000C9449000C9449000C94490061
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3</span><span>:100010000C9449000C9449000C9449000C9449003C
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4</span><span>:100020000C9449000C9449000C9449000C9449002C
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5</span><span>:100030000C9449000C9449000C9449000C9449001C
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6</span><span>:100040000C9449000C9449000C9449000C9449000C
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7</span><span>:100050000C9449000C9449000C9449000C944900FC
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8</span><span>:100060000C9449000C94490011241FBECFEFD8E036
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9</span><span>:10007000DEBFCDBF11E0A0E0B1E0E8EAF1E002C0F0
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10</span><span>:1000800005900D92A632B107D9F70E94CA000C94D0
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11</span><span>:10009000D2000C9400001092C5008093C40088E147
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12</span><span>:1000A0008093C10086E08093C20008959091C000C3
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13</span><span>:1000B00095FFFCCF8093C60008950F931F93CF93B5
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14</span><span>:1000C000DF93EC018C01060F111DC017D10721F041
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15</span><span>:1000D00089910E945600F9CFDF91CF911F910F9126
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16</span><span>:1000E00008958091C00087FFFCCF8091C6000895DD
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17</span><span>:1000F0000F931F93CF93DF93EC018C01060F111D1B
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18</span><span>:10010000C017D10721F00E9471008993F9CFDF91C8
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19</span><span>:10011000CF911F910F910895CF93DF93CDB7DEB7A5
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20</span><span>:100120002B970FB6F894DEBF0FBECDBF8BE0EBE18F
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21</span><span>:10013000F1E0DE01119601900D928A95E1F76BE0F6
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22</span><span>:10014000CE0101960E945D000E9471002B960FB6B1
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23</span><span>:10015000F894DEBF0FBECDBFDF91CF910895FF921F
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24</span><span>:100160000F931F93CF93DF93F82EC0E0D1E00CE103
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25</span><span>:1001700011E0888184508F250E94560022960C172A
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26</span><span>:100180001D07B9F78AE0DF91CF911F910F91FF9082
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27</span><span>:100190000C94560087E60E944B000E948C000E943F
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28</span><span>:1001A000AF00FBCFF894FFCF4F5551505D62795DA2
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29</span><span>:1001B00073546F5770424355717A3E3842454378C5
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30</span><span>:0E01C000773300456E746572206B65790A0016
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31</span><span>:00000001FF
 </span></span></code></pre></div><p>The Intel HEX is a transitional file format for microcontrollers, (E)PROMs or other devices.
-The documentation states that HEXs can be converted to binary files and programmed into a configuration device.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-console" data-lang="console"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span>$ objcopy -I ihex chest.hex -O binary chest.bin ; xxd chest.bin
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>00000000: 0c94 3400 0c94 4900 0c94 4900 0c94 4900  ..4...I...I...I.
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>00000010: 0c94 4900 0c94 4900 0c94 4900 0c94 4900  ..I...I...I...I.
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>00000020: 0c94 4900 0c94 4900 0c94 4900 0c94 4900  ..I...I...I...I.
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>00000030: 0c94 4900 0c94 4900 0c94 4900 0c94 4900  ..I...I...I...I.
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>00000040: 0c94 4900 0c94 4900 0c94 4900 0c94 4900  ..I...I...I...I.
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>00000050: 0c94 4900 0c94 4900 0c94 4900 0c94 4900  ..I...I...I...I.
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>00000060: 0c94 4900 0c94 4900 1124 1fbe cfef d8e0  ..I...I..$......
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>00000070: debf cdbf 11e0 a0e0 b1e0 e8ea f1e0 02c0  ................
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>00000080: 0590 0d92 a632 b107 d9f7 0e94 ca00 0c94  .....2..........
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>00000090: d200 0c94 0000 1092 c500 8093 c400 88e1  ................
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>000000a0: 8093 c100 86e0 8093 c200 0895 9091 c000  ................
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>000000b0: 95ff fccf 8093 c600 0895 0f93 1f93 cf93  ................
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>000000c0: df93 ec01 8c01 060f 111d c017 d107 21f0  ..............!.
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>000000d0: 8991 0e94 5600 f9cf df91 cf91 1f91 0f91  ....V...........
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>000000e0: 0895 8091 c000 87ff fccf 8091 c600 0895  ................
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>000000f0: 0f93 1f93 cf93 df93 ec01 8c01 060f 111d  ................
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>00000100: c017 d107 21f0 0e94 7100 8993 f9cf df91  ....!...q.......
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>00000110: cf91 1f91 0f91 0895 cf93 df93 cdb7 deb7  ................
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>00000120: 2b97 0fb6 f894 debf 0fbe cdbf 8be0 ebe1  +...............
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span>00000130: f1e0 de01 1196 0190 0d92 8a95 e1f7 6be0  ..............k.
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span>00000140: ce01 0196 0e94 5d00 0e94 7100 2b96 0fb6  ......]...q.+...
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span>00000150: f894 debf 0fbe cdbf df91 cf91 0895 ff92  ................
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span>00000160: 0f93 1f93 cf93 df93 f82e c0e0 d1e0 0ce1  ................
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span>00000170: 11e0 8881 8450 8f25 0e94 5600 2296 0c17  .....P.%..V.&#34;...
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span>00000180: 1d07 b9f7 8ae0 df91 cf91 1f91 0f91 ff90  ................
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span>00000190: 0c94 5600 87e6 0e94 4b00 0e94 8c00 0e94  ..V.....K.......
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span>000001a0: af00 fbcf f894 ffcf 4f55 5150 5d62 795d  ........OUQP]by]
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span><span>000001b0: 7354 6f57 7042 4355 717a 3e38 4245 4378  sToWpBCUqz&gt;8BECx
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span><span>000001c0: 7733 0045 6e74 6572 206b 6579 0a00       w3.Enter key..
-</span></span></code></pre></div><p>Note that we can also use the online tool <a href="http://matrixstorm.com/avr/hextobin/ihexconverter.html">matrixstorm</a> to do this.</p>
-<p>Now that we have our binary, we now need to identify for which architecture it was compiled.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-console" data-lang="console"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>file chest.bin
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>chest.bin: data
-</span></span></code></pre></div><p>Well, our beloved friend <code>file</code> didn&rsquo;t even recognized the file format. At that point, we have several options to discover the architecture:</p>
-<ul>
-<li>compile a sample project for many architectures and clustering the outputs using correlation techniques like binary diffing in the hope of identifying the correct architecture</li>
-<li>try disassembling for many architectures in the hope of discovering the right code.</li>
-<li>googling the HEX</li>
-</ul>
-<p>The Googling technique is definetly the fastest and the easiest. It gives us a lot of results concerning <strong>AVR</strong>. Let&rsquo;s give the <code>avr-objdump</code> disassembler a try:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-console" data-lang="console"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span>$ avr-objdump -m avr -D chest.hex
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span><span style="color:#960050;background-color:#1e0010"></span>00000000 &lt;.sec1&gt;:
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>   0:    0c 94 34 00     jmp    0x68    ;  0x68
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>   4:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>   8:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>   c:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>  10:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>  14:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>  18:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>  1c:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>  20:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>  24:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>  28:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>  2c:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>  30:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>  34:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>  38:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>  3c:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>  40:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span>  44:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span>  48:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span>  4c:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span>  50:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span>  54:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span>  58:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span>  5c:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span>  60:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span><span>  64:    0c 94 49 00     jmp    0x92    ;  0x92
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span><span>  68:    11 24           eor    r1, r1
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span><span><span style="color:#960050;background-color:#1e0010"></span>[...]
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span><span><span style="color:#960050;background-color:#1e0010"></span>  92:    0c 94 00 00     jmp    0    ;  0x0
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36</span><span><span style="color:#960050;background-color:#1e0010"></span>[...]
-</span></span></code></pre></div><p>If we don&rsquo;t pay attention to the last bytes which are encoding the strings, it looks like valid code. At the beginning, we can read a 26-entries vector table.</p>
-<p>We know that this code is targeting an Atmel AVR microcontroller, but which one? Here is a <a href="https://gcc.gnu.org/onlinedocs/gcc/AVR-Options.html">list of the most common ones</a>, and here is a <a href="https://www-lisic.univ-littoral.fr/~hebert/microcontroleur/fichiers/famille_avr_8_bits.png">matrix listing some of their available features</a>.</p>
-<p>Again, we have multiple options to discover the correct microcontroller:</p>
-<ul>
-<li>compile samples with all the different MCU types supported by (let&rsquo;s say) <code>avr-gcc</code> and again, use some correlation techniques against our dump</li>
-<li>searching more infos about what we already know, like the <a href="https://ece-classes.usc.edu/ee459/library/documents/avr_intr_vectors/">interrupt vectors</a></li>
-<li>googling the code</li>
-</ul>
-<p>Again, the googling technique is the fastest and the less painful. We can quickly find a <a href="https://stackoverflow.com/questions/17323757/going-through-avr-assembler-hello-world-code">dump like ours</a> that is targeting an ATmega328P.</p>
-<p>We can proceed with a static analysis using the <a href="">AVR instruction set</a> and the <a href="">ATMega328P datasheet</a>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-console" data-lang="console"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  1</span><span>  __vectors:
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  2</span><span>     0:    0c 94 34 00     jmp     0x68    ;  0x68        ; RESET     ; __ctors_end
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  3</span><span>     4:    0c 94 49 00     jmp     0x92    ;  0x92        ; INT0      ; __bad_interrupt
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  4</span><span>     8:    0c 94 49 00     jmp     0x92    ;  0x92        ; INT1
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  5</span><span>     c:    0c 94 49 00     jmp     0x92    ;  0x92        ; PCINT0
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  6</span><span>    10:    0c 94 49 00     jmp     0x92    ;  0x92        ; PCINT1
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  7</span><span>    14:    0c 94 49 00     jmp     0x92    ;  0x92        ; PCINT2
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  8</span><span>    18:    0c 94 49 00     jmp     0x92    ;  0x92        ; WDT
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  9</span><span>    1c:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER2 COMPA
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 10</span><span>    20:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER2 COMPB
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 11</span><span>    24:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER2 OVF
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 12</span><span>    28:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER1 CAPT
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 13</span><span>    2c:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER1 COMPA
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 14</span><span>    30:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER1 COMPB
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 15</span><span>    34:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER1 OVF
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 16</span><span>    38:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER0 COMPA
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 17</span><span>    3c:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER0 COMPB
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 18</span><span>    40:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER0 OVF
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 19</span><span>    44:    0c 94 49 00     jmp     0x92    ;  0x92        ; SPI,STC
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 20</span><span>    48:    0c 94 49 00     jmp     0x92    ;  0x92        ; USART,RX
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 21</span><span>    4c:    0c 94 49 00     jmp     0x92    ;  0x92        ; USART,UDRE
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 22</span><span>    50:    0c 94 49 00     jmp     0x92    ;  0x92        ; USART,TX
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 23</span><span>    54:    0c 94 49 00     jmp     0x92    ;  0x92        ; ADC
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 24</span><span>    58:    0c 94 49 00     jmp     0x92    ;  0x92        ; EE READY
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 25</span><span>    5c:    0c 94 49 00     jmp     0x92    ;  0x92        ; ANALOG COMP
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 26</span><span>    60:    0c 94 49 00     jmp     0x92    ;  0x92        ; TWI
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 27</span><span>    64:    0c 94 49 00     jmp     0x92    ;  0x92        ; SPM READY
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 28</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 29</span><span><span style="color:#960050;background-color:#1e0010"></span>  __ctors_end:
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 30</span><span>    68:    11 24           eor    r1, r1        ; r1 = 0
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 31</span><span>    6a:    1f be           out    0x3f, r1      ; clear 0xf3 (SREG)
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 32</span><span>                                                ; Initialize stack pointer at 0x08ff
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 33</span><span>    6c:    cf ef           ldi    r28, 0xFF
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 34</span><span>    6e:    d8 e0           ldi    r29, 0x08
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 35</span><span>    70:    de bf           out    0x3e, r29     ; 0x3e is the high portion of the stack pointer
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 36</span><span>    72:    cd bf           out    0x3d, r28     ; 0x3d is the low  portion of the stack pointer
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 37</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 38</span><span><span style="color:#960050;background-color:#1e0010"></span>  __do_copy_data:
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 39</span><span>    74:    11 e0           ldi    r17, 0x01
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 40</span><span>    76:    a0 e0           ldi    r26, 0x00
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 41</span><span>    78:    b1 e0           ldi    r27, 0x01
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 42</span><span>    7a:    e8 ea           ldi    r30, 0xA8     ; low  portion of the data at 0x01A8
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 43</span><span>    7c:    f1 e0           ldi    r31, 0x01     ; high portion of the data at 0x01A8
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 44</span><span>    7e:    02 c0           rjmp   .+4           ; 0x84
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 45</span><span>    80:    05 90           lpm    r0, Z+
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 46</span><span>    82:    0d 92           st     X+, r0
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 47</span><span>    84:    a6 32           cpi    r26, 0x26     ; size of the data section
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 48</span><span>    86:    b1 07           cpc    r27, r17
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 49</span><span>    88:    d9 f7           brne   .-10          ; 0x80
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 50</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 51</span><span><span style="color:#960050;background-color:#1e0010"></span>    8a:    0e 94 ca 00     call   0x194         ; __main
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 52</span><span>    8e:    0c 94 d2 00     jmp    0x1a4         ; __exit
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 53</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 54</span><span><span style="color:#960050;background-color:#1e0010"></span>  __bad_interrupt:
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 55</span><span>    92:    0c 94 00 00     jmp    0
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 56</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 57</span><span><span style="color:#960050;background-color:#1e0010"></span>  __usart_init:                                 ; from avr/iom328p.h
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 58</span><span>    96:    10 92 c5 00     sts    0x00C5, r1    ; UBRR0H or _SFR_MEM8(0xC5)
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 59</span><span>    9a:    80 93 c4 00     sts    0x00C4, r24   ; UBRR0L
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 60</span><span>    9e:    88 e1           ldi    r24, 0x18     ; 24 or 00011000b
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 61</span><span>    a0:    80 93 c1 00     sts    0x00C1, r24   ; UCSR0B
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 62</span><span>    a4:    86 e0           ldi    r24, 0x06     ; 06 or 00000110b
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 63</span><span>    a6:    80 93 c2 00     sts    0x00C2, r24   ; UCSR0C
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 64</span><span>    aa:    08 95           ret
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 65</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 66</span><span><span style="color:#960050;background-color:#1e0010"></span>  __usart_transmit_byte:                        ; while (!(UCSR0A &amp; (1 &lt;&lt; UDRE0));
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 67</span><span>    ac:    90 91 c0 00     lds    r25, 0x00C0   ; r25 = UCSR0A
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 68</span><span>    b0:    95 ff           sbrs    r25, 5       ; skip if bit 5 (UDRE0) in r25 is set
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 69</span><span>    b2:    fc cf           rjmp    .-8          ; loop
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 70</span><span>    b4:    80 93 c6 00     sts    0x00C6, r24   ; UDR0 = 24
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 71</span><span>    b8:    08 95           ret
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 72</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 73</span><span><span style="color:#960050;background-color:#1e0010"></span>  __usart_transmit_bytes:
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 74</span><span>    ba:    0f 93           push   r16
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 75</span><span>    bc:    1f 93           push   r17
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 76</span><span>    be:    cf 93           push   r28
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 77</span><span>    c0:    df 93           push   r29
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 78</span><span>    c2:    ec 01           movw   r28, r24
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 79</span><span>    c4:    8c 01           movw   r16, r24
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 80</span><span>    c6:    06 0f           add    r16, r22
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 81</span><span>    c8:    11 1d           adc    r17, r1
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 82</span><span>    ca:    c0 17           cp     r28, r16
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 83</span><span>    cc:    d1 07           cpc    r29, r17
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 84</span><span>    ce:    21 f0           breq   .+8       ; 0xd8
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 85</span><span>    d0:    89 91           ld     r24, Y+   ; load indirect from data space using index Y (post inc)
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 86</span><span>    d2:    0e 94 56 00     call   0xac      ; __usart_transmit_byte(r24)
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 87</span><span>    d6:    f9 cf           rjmp   .-14      ; 0xca
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 88</span><span>    d8:    df 91           pop    r29
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 89</span><span>    da:    cf 91           pop    r28
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 90</span><span>    dc:    1f 91           pop    r17
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 91</span><span>    de:    0f 91           pop    r16
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 92</span><span>    e0:    08 95           ret
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 93</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 94</span><span><span style="color:#960050;background-color:#1e0010"></span>  __usart_receive_byte:                         ; while (!(UCSR0A &amp; (1 &lt;&lt; RXC0)));
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 95</span><span>    e2:    80 91 c0 00     lds    r24, 0x00C0   ; r24 = UCSR0A
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 96</span><span>    e6:    87 ff           sbrs   r24, 7        ; skip if bit 7 (RXC0) in r24 is set
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 97</span><span>    e8:    fc cf           rjmp   .-8           ; loop
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 98</span><span>    ea:    80 91 c6 00     lds    r24, 0x00C6   ; UDR0
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 99</span><span>    ee:    08 95           ret
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">100</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">101</span><span><span style="color:#960050;background-color:#1e0010"></span>  __usart_receive_bytes:
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">102</span><span>    f0:    0f 93           push    r16
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">103</span><span>    f2:    1f 93           push    r17
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">104</span><span>    f4:    cf 93           push    r28
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">105</span><span>    f6:    df 93           push    r29
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">106</span><span>    f8:    ec 01           movw    r28, r24
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">107</span><span>    fa:    8c 01           movw    r16, r24
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">108</span><span>    fc:    06 0f           add     r16, r22
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">109</span><span>    fe:    11 1d           adc     r17, r1
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">110</span><span>   100:    c0 17           cp      r28, r16
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">111</span><span>   102:    d1 07           cpc     r29, r17
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">112</span><span>   104:    21 f0           breq    .+8
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">113</span><span>   106:    0e 94 71 00     call    0xe2         ; __usart_receive_byte
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">114</span><span>   10a:    89 93           st      Y+, r24
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">115</span><span>   10c:    f9 cf           rjmp    .-14
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">116</span><span>   10e:    df 91           pop     r29
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">117</span><span>   110:    cf 91           pop     r28
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">118</span><span>   112:    1f 91           pop     r17
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">119</span><span>   114:    0f 91           pop     r16
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">120</span><span>   116:    08 95           ret
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">121</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">122</span><span><span style="color:#960050;background-color:#1e0010"></span>  __display_prompt:
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">123</span><span>   118:    cf 93           push   r28
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">124</span><span>   11a:    df 93           push   r29
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">125</span><span>   11c:    cd b7           in     r28, 0x3d     ; save SP low
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">126</span><span>   11e:    de b7           in     r29, 0x3e     ; save SP high
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">127</span><span>   120:    2b 97           sbiw   r28, 0x0b     ; r28 -= strlen(prompt) + 1
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">128</span><span>   122:    0f b6           in     r0, 0x3f      ; save SREG
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">129</span><span>   124:    f8 94           cli                  ; clear interrupts
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">130</span><span>   126:    de bf           out    0x3e, r29     ; restore SP high
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">131</span><span>   128:    0f be           out    0x3f, r0      ; restore SREG
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">132</span><span>   12a:    cd bf           out    0x3d, r28     ; restore SP low
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">133</span><span>   12c:    8b e0           ldi    r24, 0x0B     ; strlen(_prompt) + 1
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">134</span><span>   12e:    eb e1           ldi    r30, 0x1B
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">135</span><span>   130:    f1 e0           ldi    r31, 0x01
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">136</span><span>   132:    de 01           movw   r26, r28
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">137</span><span>   134:    11 96           adiw   r26, 0x01     ; 1
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">138</span><span>   136:    01 90           ld     r0, Z+        &lt;----,
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">139</span><span>   138:    0d 92           st     X+, r0             |
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">140</span><span>   13a:    8a 95           dec    r24                |
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">141</span><span>   13c:    e1 f7           brne   .-8           -----&#39;
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">142</span><span>   13e:    6b e0           ldi    r22, 0x0B     ; strlen(_prompt) + 1
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">143</span><span>   140:    ce 01           movw   r24, r28
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">144</span><span>   142:    01 96           adiw   r24, 0x01     ; inc r24 ptr
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">145</span><span>   144:    0e 94 5d 00     call   0xba          ; __usart_transmit_bytes(r24, r22)
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">146</span><span>   148:    0e 94 71 00     call   0xe2          ; r24 = __usart_receive_byte()
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">147</span><span>   14c:    2b 96           adiw   r28, 0x0b     ; move r28 at the end of _prompt
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">148</span><span>   14e:    0f b6           in     r0, 0x3f      ; save SREG
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">149</span><span>   150:    f8 94           cli
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">150</span><span>   152:    de bf           out    0x3e, r29     ; restore SP high (not touched)
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">151</span><span>   154:    0f be           out    0x3f, r0      ; restore SREG
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">152</span><span>   156:    cd bf           out    0x3d, r28     ; restore SP low (end of _prompt, beginning of _flag)
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">153</span><span>   158:    df 91           pop    r29
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">154</span><span>   15a:    cf 91           pop    r28
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">155</span><span>   15c:    08 95           ret
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">156</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">157</span><span><span style="color:#960050;background-color:#1e0010"></span>  __decode:
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">158</span><span>   15e:    ff 92           push   r15
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">159</span><span>   160:    0f 93           push   r16
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">160</span><span>   162:    1f 93           push   r17
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">161</span><span>   164:    cf 93           push   r28
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">162</span><span>   166:    df 93           push   r29
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">163</span><span>   168:    f8 2e           mov    r15, r24
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">164</span><span>   16a:    c0 e0           ldi    r28, 0x00
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">165</span><span>   16c:    d1 e0           ldi    r29, 0x01
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">166</span><span>   16e:    0c e1           ldi    r16, 0x1C
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">167</span><span>   170:    11 e0           ldi    r17, 0x01
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">168</span><span>   172:    88 81           ld     r24, Y
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">169</span><span>   174:    84 50           subi   r24, 0x04     ; acc -= 4
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">170</span><span>   176:    8f 25           eor    r24, r15      ; acc ^= user input key
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">171</span><span>   178:    0e 94 56 00     call   0xac          ; __usart_transmit_byte
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">172</span><span>   17c:    22 96           adiw   r28, 0x02     ; i += 2
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">173</span><span>   17e:    0c 17           cp     r16, r28
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">174</span><span>   180:    1d 07           cpc    r17, r29
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">175</span><span>   182:    b9 f7           brne   .-18          ; loop
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">176</span><span>   184:    8a e0           ldi    r24, 0x0A     ; r24 = &#39;\n&#39;
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">177</span><span>   186:    df 91           pop    r29
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">178</span><span>   188:    cf 91           pop    r28
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">179</span><span>   18a:    1f 91           pop    r17
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">180</span><span>   18c:    0f 91           pop    r16
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">181</span><span>   18e:    ff 90           pop    r15
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">182</span><span>   190:    0c 94 56 00     jmp    0xac          ; __usart_transmit_byte(&#39;\n&#39;)
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">183</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">184</span><span><span style="color:#960050;background-color:#1e0010"></span>  __main:
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">185</span><span>   194:    87 e6           ldi    r24, 0x67     ; UBRR
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">186</span><span>   196:    0e 94 4b 00     call   0x96          ; __usart_init(UBRR)
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">187</span><span>   19a:    0e 94 8c 00     call   0x118         ; while __decode(__display_prompt())
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">188</span><span>   19e:    0e 94 af 00     call   0x15e         ;
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">189</span><span>   1a2:    fb cf           rjmp   .-10
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">190</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">191</span><span><span style="color:#960050;background-color:#1e0010"></span>  __exit:
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">192</span><span>   1a4:    f8 94           cli
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">193</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">194</span><span><span style="color:#960050;background-color:#1e0010"></span>  __stop:
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">195</span><span>   1a6:    ff cf           rjmp   .-2           ;  0x1a6
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">196</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">197</span><span><span style="color:#960050;background-color:#1e0010"></span>  __flag:   ; OUQP]by]sToWpBCUqz&gt;8BECxw3
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">198</span><span>   1a8:     4f 55 51 50 5d 62 79 5d 73 54 6f 57 70 42 43 55 71 7a 3e 38 42 45 43 78 77 33
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">199</span><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">200</span><span><span style="color:#960050;background-color:#1e0010"></span>  __prompt: ; Enter key
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">201</span><span>   1c3:     45 6e 74 65 72 20 6b 65 79 0a 00
-</span></span></code></pre></div><p>Perfect, there is a decoding routine at <code>0x15e</code> for the encoded flag at <code>0x1a8</code>. This routine needs a xor key, which is received using a serial line. We can pursue the static analysis by bruteforcing the key. This python script will do the job:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span>encoded <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;OUQP]by]sToWpBCUqz&gt;8BECxw3&#34;</span>
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>rot_key <span style="color:#f92672">=</span> <span style="color:#ae81ff">4</span>
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span><span style="color:#66d9ef">for</span> xor_key <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">0xFF</span>):
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>    decoded <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">.</span>join(
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>        [
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>            chr((ord(char) <span style="color:#f92672">-</span> rot_key) <span style="color:#f92672">^</span> xor_key)
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>            <span style="color:#66d9ef">for</span> i, char <span style="color:#f92672">in</span> enumerate(encoded)
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> i <span style="color:#f92672">%</span> <span style="color:#ae81ff">2</span>
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>        ]
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>    )
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>    <span style="color:#66d9ef">if</span> decoded<span style="color:#f92672">.</span>casefold()<span style="color:#f92672">.</span>startswith(<span style="color:#e6db74">&#34;ecw{&#34;</span>):
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>xor_key<span style="color:#e6db74">:</span><span style="color:#e6db74">#04x</span><span style="color:#e6db74">}</span><span style="color:#e6db74">: </span><span style="color:#e6db74">{</span>decoded<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-console" data-lang="console"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>$ python3 decode.py
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>0x0e ECW{aeb1c401}
-</span></span></code></pre></div><p>Another approach was to emulate the MCU and bruteforce the key like so:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-console" data-lang="console"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>$ qemu-system-avr -S -s -nographic -serial tcp::5678,server<span style="color:#f92672">=</span>on,wait<span style="color:#f92672">=</span>off -machine uno -bios chest.bin
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>$ printf <span style="color:#e6db74">&#34;\x0e&#34;</span> | nc localhost <span style="color:#ae81ff">5678</span>
-</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span>ECW{aeb1c401}
-</span></span></code></pre></div><p>I hope you enjoyed it as much as I do, see you next year!</p>
-
-      </div>
-
-
-      <footer>
-        
-
-<section class="see-also">
-  
-    
-    
-    
-      <h3 id="see-also-in-ecw">
-        See also in ECW
-        <a class="heading-link" href="#see-also-in-ecw">
-          <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-          <span class="sr-only">Link to heading</span>
-        </a>
-      </h3>
-      <nav>
-        <ul>
-        
-        
-          
-            <li>
-              <a href="/posts/ecw-2022-minifilter/">ECW 2022 - Minifilter</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="/posts/ecw-2022-uefi/">ECW 2022 - UEFI</a>
-            </li>
-          
-        
-          
-        
-        </ul>
-      </nav>
-    
-  
-</section>
-
-
-        
-        
-        
-      </footer>
-    </article>
-
-    
-  </section>
-
-    </div>
-
-    <footer class="footer">
-  <section class="container">
-    
-  </section>
-</footer>
-
-  </main>
-
-  
-
-  
-  
-  <script src="/js/coder.min.236049395dc3682fb2719640872958e12f1f24067bb09c327b233e6290c7edac.js" integrity="sha256-I2BJOV3DaC&#43;ycZZAhylY4S8fJAZ7sJwyeyM&#43;YpDH7aw="></script>
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</body>
-
-</html>
+The documentation states that HEXs can be converted to binary files and programmed into a configuration device.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1</span><span>$ objcopy -I ihex chest.hex -O binary chest.bin ; xxd chest.bin
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2</span><span>00000000: 0c94 3400 0c94 4900 0c94 4900 0c94 4900  ..4...I...I...I.
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3</span><span>00000010: 0c94 4900 0c94 4900 0c94 4900 0c94 4900  ..I...I...I...I.
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4</span><span>00000020: 0c94 4900 0c94 4900 0c94 4900 0c94 4900  ..I...I...I...I.
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5</span><span>00000030: 0c94 4900 0c94 4900 0c94 4900 0c94 4900  ..I...I...I...I.
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6</span><span>00000040: 0c94 4900 0c94 4900 0c94 4900 0c94 4900  ..I...I...I...I.
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7</span><span>00000050: 0c94 4900 0c94 4900 0c94 4900 0c94 4900  ..I...I...I...I.
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8</span><span>00000060: 0c94 4900 0c94 4900 1124 1fbe cfef d8e0  ..I...I..$......
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9</span><span>00000070: debf cdbf 11e0 a0e0 b1e0 e8ea f1e0 02c0  ................
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10</span><span>00000080: 0590 0d92 a632 b107 d9f7 0e94 ca00 0c94  .....2..........
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11</span><span>00000090: d200 0c94 0000 1092 c500 8093 c400 88e1  ................
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12</span><span>000000a0: 8093 c100 86e0 8093 c200 0895 9091 c000  ................
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13</span><span>000000b0: 95ff fccf 8093 c600 0895 0f93 1f93 cf93  ................
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14</span><span>000000c0: df93 ec01 8c01 060f 111d c017 d107 21f0  ..............!.
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15</span><span>000000d0: 8991 0e94 5600 f9cf df91 cf91 1f91 0f91  ....V...........
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16</span><span>000000e0: 0895 8091 c000 87ff fccf 8091 c600 0895  ................
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17</span><span>000000f0: 0f93 1f93 cf93 df93 ec01 8c01 060f 111d  ................
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18</span><span>00000100: c017 d107 21f0 0e94 7100 8993 f9cf df91  ....!...q.......
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19</span><span>00000110: cf91 1f91 0f91 0895 cf93 df93 cdb7 deb7  ................
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20</span><span>00000120: 2b97 0fb6 f894 debf 0fbe cdbf 8be0 ebe1  +...............
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21</span><span>00000130: f1e0 de01 1196 0190 0d92 8a95 e1f7 6be0  ..............k.
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22</span><span>00000140: ce01 0196 0e94 5d00 0e94 7100 2b96 0fb6  ......]...q.+...
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23</span><span>00000150: f894 debf 0fbe cdbf df91 cf91 0895 ff92  ................
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24</span><span>00000160: 0f93 1f93 cf93 df93 f82e c0e0 d1e0 0ce1  ................
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25</span><span>00000170: 11e0 8881 8450 8f25 0e94 5600 2296 0c17  .....P.%..V.&#34;...
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26</span><span>00000180: 1d07 b9f7 8ae0 df91 cf91 1f91 0f91 ff90  ................
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27</span><span>00000190: 0c94 5600 87e6 0e94 4b00 0e94 8c00 0e94  ..V.....K.......
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28</span><span>000001a0: af00 fbcf f894 ffcf 4f55 5150 5d62 795d  ........OUQP]by]
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29</span><span>000001b0: 7354 6f57 7042 4355 717a 3e38 4245 4378  sToWpBCUqz&gt;8BECx
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30</span><span>000001c0: 7733 0045 6e74 6572 206b 6579 0a00       w3.Enter key..
+</span></span></code></pre></div><p>Note that we can also use the online tool <a href=http://matrixstorm.com/avr/hextobin/ihexconverter.html>matrixstorm</a> to do this.</p><p>Now that we have our binary, we now need to identify for which architecture it was compiled.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1</span><span>file chest.bin
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2</span><span>chest.bin: data
+</span></span></code></pre></div><p>Well, our beloved friend <code>file</code> didn&rsquo;t even recognized the file format. At that point, we have several options to discover the architecture:</p><ul><li>compile a sample project for many architectures and clustering the outputs using correlation techniques like binary diffing in the hope of identifying the correct architecture</li><li>try disassembling for many architectures in the hope of discovering the right code.</li><li>googling the HEX</li></ul><p>The Googling technique is definetly the fastest and the easiest. It gives us a lot of results concerning <strong>AVR</strong>. Let&rsquo;s give the <code>avr-objdump</code> disassembler a try:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1</span><span>$ avr-objdump -m avr -D chest.hex
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3</span><span><span style=color:#960050;background-color:#1e0010></span>00000000 &lt;.sec1&gt;:
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4</span><span>   0:    0c 94 34 00     jmp    0x68    ;  0x68
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5</span><span>   4:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6</span><span>   8:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7</span><span>   c:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8</span><span>  10:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9</span><span>  14:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10</span><span>  18:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11</span><span>  1c:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12</span><span>  20:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13</span><span>  24:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14</span><span>  28:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15</span><span>  2c:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16</span><span>  30:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17</span><span>  34:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18</span><span>  38:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19</span><span>  3c:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20</span><span>  40:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21</span><span>  44:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22</span><span>  48:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23</span><span>  4c:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24</span><span>  50:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25</span><span>  54:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26</span><span>  58:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27</span><span>  5c:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28</span><span>  60:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29</span><span>  64:    0c 94 49 00     jmp    0x92    ;  0x92
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30</span><span>  68:    11 24           eor    r1, r1
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32</span><span><span style=color:#960050;background-color:#1e0010></span>[...]
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34</span><span><span style=color:#960050;background-color:#1e0010></span>  92:    0c 94 00 00     jmp    0    ;  0x0
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">35</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">36</span><span><span style=color:#960050;background-color:#1e0010></span>[...]
+</span></span></code></pre></div><p>If we don&rsquo;t pay attention to the last bytes which are encoding the strings, it looks like valid code. At the beginning, we can read a 26-entries vector table.</p><p>We know that this code is targeting an Atmel AVR microcontroller, but which one? Here is a <a href=https://gcc.gnu.org/onlinedocs/gcc/AVR-Options.html>list of the most common ones</a>, and here is a <a href=https://www-lisic.univ-littoral.fr/~hebert/microcontroleur/fichiers/famille_avr_8_bits.png>matrix listing some of their available features</a>.</p><p>Again, we have multiple options to discover the correct microcontroller:</p><ul><li>compile samples with all the different MCU types supported by (let&rsquo;s say) <code>avr-gcc</code> and again, use some correlation techniques against our dump</li><li>searching more infos about what we already know, like the <a href=https://ece-classes.usc.edu/ee459/library/documents/avr_intr_vectors/>interrupt vectors</a></li><li>googling the code</li></ul><p>Again, the googling technique is the fastest and the less painful. We can quickly find a <a href=https://stackoverflow.com/questions/17323757/going-through-avr-assembler-hello-world-code>dump like ours</a> that is targeting an ATmega328P.</p><p>We can proceed with a static analysis using the <a href>AVR instruction set</a> and the <a href>ATMega328P datasheet</a>:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  1</span><span>  __vectors:
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  2</span><span>     0:    0c 94 34 00     jmp     0x68    ;  0x68        ; RESET     ; __ctors_end
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  3</span><span>     4:    0c 94 49 00     jmp     0x92    ;  0x92        ; INT0      ; __bad_interrupt
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  4</span><span>     8:    0c 94 49 00     jmp     0x92    ;  0x92        ; INT1
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  5</span><span>     c:    0c 94 49 00     jmp     0x92    ;  0x92        ; PCINT0
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  6</span><span>    10:    0c 94 49 00     jmp     0x92    ;  0x92        ; PCINT1
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  7</span><span>    14:    0c 94 49 00     jmp     0x92    ;  0x92        ; PCINT2
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  8</span><span>    18:    0c 94 49 00     jmp     0x92    ;  0x92        ; WDT
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  9</span><span>    1c:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER2 COMPA
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 10</span><span>    20:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER2 COMPB
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 11</span><span>    24:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER2 OVF
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 12</span><span>    28:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER1 CAPT
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 13</span><span>    2c:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER1 COMPA
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 14</span><span>    30:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER1 COMPB
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 15</span><span>    34:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER1 OVF
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 16</span><span>    38:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER0 COMPA
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 17</span><span>    3c:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER0 COMPB
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 18</span><span>    40:    0c 94 49 00     jmp     0x92    ;  0x92        ; TIMER0 OVF
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 19</span><span>    44:    0c 94 49 00     jmp     0x92    ;  0x92        ; SPI,STC
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 20</span><span>    48:    0c 94 49 00     jmp     0x92    ;  0x92        ; USART,RX
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 21</span><span>    4c:    0c 94 49 00     jmp     0x92    ;  0x92        ; USART,UDRE
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 22</span><span>    50:    0c 94 49 00     jmp     0x92    ;  0x92        ; USART,TX
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 23</span><span>    54:    0c 94 49 00     jmp     0x92    ;  0x92        ; ADC
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 24</span><span>    58:    0c 94 49 00     jmp     0x92    ;  0x92        ; EE READY
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 25</span><span>    5c:    0c 94 49 00     jmp     0x92    ;  0x92        ; ANALOG COMP
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 26</span><span>    60:    0c 94 49 00     jmp     0x92    ;  0x92        ; TWI
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 27</span><span>    64:    0c 94 49 00     jmp     0x92    ;  0x92        ; SPM READY
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 28</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 29</span><span><span style=color:#960050;background-color:#1e0010></span>  __ctors_end:
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 30</span><span>    68:    11 24           eor    r1, r1        ; r1 = 0
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 31</span><span>    6a:    1f be           out    0x3f, r1      ; clear 0xf3 (SREG)
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 32</span><span>                                                ; Initialize stack pointer at 0x08ff
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 33</span><span>    6c:    cf ef           ldi    r28, 0xFF
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 34</span><span>    6e:    d8 e0           ldi    r29, 0x08
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 35</span><span>    70:    de bf           out    0x3e, r29     ; 0x3e is the high portion of the stack pointer
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 36</span><span>    72:    cd bf           out    0x3d, r28     ; 0x3d is the low  portion of the stack pointer
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 37</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 38</span><span><span style=color:#960050;background-color:#1e0010></span>  __do_copy_data:
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 39</span><span>    74:    11 e0           ldi    r17, 0x01
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 40</span><span>    76:    a0 e0           ldi    r26, 0x00
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 41</span><span>    78:    b1 e0           ldi    r27, 0x01
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 42</span><span>    7a:    e8 ea           ldi    r30, 0xA8     ; low  portion of the data at 0x01A8
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 43</span><span>    7c:    f1 e0           ldi    r31, 0x01     ; high portion of the data at 0x01A8
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 44</span><span>    7e:    02 c0           rjmp   .+4           ; 0x84
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 45</span><span>    80:    05 90           lpm    r0, Z+
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 46</span><span>    82:    0d 92           st     X+, r0
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 47</span><span>    84:    a6 32           cpi    r26, 0x26     ; size of the data section
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 48</span><span>    86:    b1 07           cpc    r27, r17
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 49</span><span>    88:    d9 f7           brne   .-10          ; 0x80
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 50</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 51</span><span><span style=color:#960050;background-color:#1e0010></span>    8a:    0e 94 ca 00     call   0x194         ; __main
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 52</span><span>    8e:    0c 94 d2 00     jmp    0x1a4         ; __exit
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 53</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 54</span><span><span style=color:#960050;background-color:#1e0010></span>  __bad_interrupt:
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 55</span><span>    92:    0c 94 00 00     jmp    0
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 56</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 57</span><span><span style=color:#960050;background-color:#1e0010></span>  __usart_init:                                 ; from avr/iom328p.h
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 58</span><span>    96:    10 92 c5 00     sts    0x00C5, r1    ; UBRR0H or _SFR_MEM8(0xC5)
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 59</span><span>    9a:    80 93 c4 00     sts    0x00C4, r24   ; UBRR0L
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 60</span><span>    9e:    88 e1           ldi    r24, 0x18     ; 24 or 00011000b
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 61</span><span>    a0:    80 93 c1 00     sts    0x00C1, r24   ; UCSR0B
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 62</span><span>    a4:    86 e0           ldi    r24, 0x06     ; 06 or 00000110b
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 63</span><span>    a6:    80 93 c2 00     sts    0x00C2, r24   ; UCSR0C
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 64</span><span>    aa:    08 95           ret
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 65</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 66</span><span><span style=color:#960050;background-color:#1e0010></span>  __usart_transmit_byte:                        ; while (!(UCSR0A &amp; (1 &lt;&lt; UDRE0));
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 67</span><span>    ac:    90 91 c0 00     lds    r25, 0x00C0   ; r25 = UCSR0A
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 68</span><span>    b0:    95 ff           sbrs    r25, 5       ; skip if bit 5 (UDRE0) in r25 is set
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 69</span><span>    b2:    fc cf           rjmp    .-8          ; loop
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 70</span><span>    b4:    80 93 c6 00     sts    0x00C6, r24   ; UDR0 = 24
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 71</span><span>    b8:    08 95           ret
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 72</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 73</span><span><span style=color:#960050;background-color:#1e0010></span>  __usart_transmit_bytes:
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 74</span><span>    ba:    0f 93           push   r16
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 75</span><span>    bc:    1f 93           push   r17
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 76</span><span>    be:    cf 93           push   r28
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 77</span><span>    c0:    df 93           push   r29
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 78</span><span>    c2:    ec 01           movw   r28, r24
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 79</span><span>    c4:    8c 01           movw   r16, r24
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 80</span><span>    c6:    06 0f           add    r16, r22
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 81</span><span>    c8:    11 1d           adc    r17, r1
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 82</span><span>    ca:    c0 17           cp     r28, r16
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 83</span><span>    cc:    d1 07           cpc    r29, r17
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 84</span><span>    ce:    21 f0           breq   .+8       ; 0xd8
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 85</span><span>    d0:    89 91           ld     r24, Y+   ; load indirect from data space using index Y (post inc)
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 86</span><span>    d2:    0e 94 56 00     call   0xac      ; __usart_transmit_byte(r24)
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 87</span><span>    d6:    f9 cf           rjmp   .-14      ; 0xca
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 88</span><span>    d8:    df 91           pop    r29
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 89</span><span>    da:    cf 91           pop    r28
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 90</span><span>    dc:    1f 91           pop    r17
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 91</span><span>    de:    0f 91           pop    r16
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 92</span><span>    e0:    08 95           ret
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 93</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 94</span><span><span style=color:#960050;background-color:#1e0010></span>  __usart_receive_byte:                         ; while (!(UCSR0A &amp; (1 &lt;&lt; RXC0)));
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 95</span><span>    e2:    80 91 c0 00     lds    r24, 0x00C0   ; r24 = UCSR0A
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 96</span><span>    e6:    87 ff           sbrs   r24, 7        ; skip if bit 7 (RXC0) in r24 is set
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 97</span><span>    e8:    fc cf           rjmp   .-8           ; loop
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 98</span><span>    ea:    80 91 c6 00     lds    r24, 0x00C6   ; UDR0
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 99</span><span>    ee:    08 95           ret
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">100</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">101</span><span><span style=color:#960050;background-color:#1e0010></span>  __usart_receive_bytes:
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">102</span><span>    f0:    0f 93           push    r16
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">103</span><span>    f2:    1f 93           push    r17
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">104</span><span>    f4:    cf 93           push    r28
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">105</span><span>    f6:    df 93           push    r29
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">106</span><span>    f8:    ec 01           movw    r28, r24
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">107</span><span>    fa:    8c 01           movw    r16, r24
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">108</span><span>    fc:    06 0f           add     r16, r22
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">109</span><span>    fe:    11 1d           adc     r17, r1
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">110</span><span>   100:    c0 17           cp      r28, r16
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">111</span><span>   102:    d1 07           cpc     r29, r17
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">112</span><span>   104:    21 f0           breq    .+8
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">113</span><span>   106:    0e 94 71 00     call    0xe2         ; __usart_receive_byte
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">114</span><span>   10a:    89 93           st      Y+, r24
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">115</span><span>   10c:    f9 cf           rjmp    .-14
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">116</span><span>   10e:    df 91           pop     r29
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">117</span><span>   110:    cf 91           pop     r28
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">118</span><span>   112:    1f 91           pop     r17
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">119</span><span>   114:    0f 91           pop     r16
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">120</span><span>   116:    08 95           ret
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">121</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">122</span><span><span style=color:#960050;background-color:#1e0010></span>  __display_prompt:
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">123</span><span>   118:    cf 93           push   r28
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">124</span><span>   11a:    df 93           push   r29
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">125</span><span>   11c:    cd b7           in     r28, 0x3d     ; save SP low
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">126</span><span>   11e:    de b7           in     r29, 0x3e     ; save SP high
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">127</span><span>   120:    2b 97           sbiw   r28, 0x0b     ; r28 -= strlen(prompt) + 1
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">128</span><span>   122:    0f b6           in     r0, 0x3f      ; save SREG
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">129</span><span>   124:    f8 94           cli                  ; clear interrupts
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">130</span><span>   126:    de bf           out    0x3e, r29     ; restore SP high
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">131</span><span>   128:    0f be           out    0x3f, r0      ; restore SREG
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">132</span><span>   12a:    cd bf           out    0x3d, r28     ; restore SP low
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">133</span><span>   12c:    8b e0           ldi    r24, 0x0B     ; strlen(_prompt) + 1
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">134</span><span>   12e:    eb e1           ldi    r30, 0x1B
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">135</span><span>   130:    f1 e0           ldi    r31, 0x01
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">136</span><span>   132:    de 01           movw   r26, r28
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">137</span><span>   134:    11 96           adiw   r26, 0x01     ; 1
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">138</span><span>   136:    01 90           ld     r0, Z+        &lt;----,
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">139</span><span>   138:    0d 92           st     X+, r0             |
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">140</span><span>   13a:    8a 95           dec    r24                |
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">141</span><span>   13c:    e1 f7           brne   .-8           -----&#39;
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">142</span><span>   13e:    6b e0           ldi    r22, 0x0B     ; strlen(_prompt) + 1
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">143</span><span>   140:    ce 01           movw   r24, r28
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">144</span><span>   142:    01 96           adiw   r24, 0x01     ; inc r24 ptr
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">145</span><span>   144:    0e 94 5d 00     call   0xba          ; __usart_transmit_bytes(r24, r22)
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">146</span><span>   148:    0e 94 71 00     call   0xe2          ; r24 = __usart_receive_byte()
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">147</span><span>   14c:    2b 96           adiw   r28, 0x0b     ; move r28 at the end of _prompt
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">148</span><span>   14e:    0f b6           in     r0, 0x3f      ; save SREG
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">149</span><span>   150:    f8 94           cli
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">150</span><span>   152:    de bf           out    0x3e, r29     ; restore SP high (not touched)
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">151</span><span>   154:    0f be           out    0x3f, r0      ; restore SREG
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">152</span><span>   156:    cd bf           out    0x3d, r28     ; restore SP low (end of _prompt, beginning of _flag)
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">153</span><span>   158:    df 91           pop    r29
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">154</span><span>   15a:    cf 91           pop    r28
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">155</span><span>   15c:    08 95           ret
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">156</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">157</span><span><span style=color:#960050;background-color:#1e0010></span>  __decode:
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">158</span><span>   15e:    ff 92           push   r15
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">159</span><span>   160:    0f 93           push   r16
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">160</span><span>   162:    1f 93           push   r17
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">161</span><span>   164:    cf 93           push   r28
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">162</span><span>   166:    df 93           push   r29
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">163</span><span>   168:    f8 2e           mov    r15, r24
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">164</span><span>   16a:    c0 e0           ldi    r28, 0x00
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">165</span><span>   16c:    d1 e0           ldi    r29, 0x01
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">166</span><span>   16e:    0c e1           ldi    r16, 0x1C
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">167</span><span>   170:    11 e0           ldi    r17, 0x01
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">168</span><span>   172:    88 81           ld     r24, Y
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">169</span><span>   174:    84 50           subi   r24, 0x04     ; acc -= 4
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">170</span><span>   176:    8f 25           eor    r24, r15      ; acc ^= user input key
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">171</span><span>   178:    0e 94 56 00     call   0xac          ; __usart_transmit_byte
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">172</span><span>   17c:    22 96           adiw   r28, 0x02     ; i += 2
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">173</span><span>   17e:    0c 17           cp     r16, r28
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">174</span><span>   180:    1d 07           cpc    r17, r29
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">175</span><span>   182:    b9 f7           brne   .-18          ; loop
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">176</span><span>   184:    8a e0           ldi    r24, 0x0A     ; r24 = &#39;\n&#39;
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">177</span><span>   186:    df 91           pop    r29
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">178</span><span>   188:    cf 91           pop    r28
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">179</span><span>   18a:    1f 91           pop    r17
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">180</span><span>   18c:    0f 91           pop    r16
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">181</span><span>   18e:    ff 90           pop    r15
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">182</span><span>   190:    0c 94 56 00     jmp    0xac          ; __usart_transmit_byte(&#39;\n&#39;)
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">183</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">184</span><span><span style=color:#960050;background-color:#1e0010></span>  __main:
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">185</span><span>   194:    87 e6           ldi    r24, 0x67     ; UBRR
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">186</span><span>   196:    0e 94 4b 00     call   0x96          ; __usart_init(UBRR)
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">187</span><span>   19a:    0e 94 8c 00     call   0x118         ; while __decode(__display_prompt())
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">188</span><span>   19e:    0e 94 af 00     call   0x15e         ;
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">189</span><span>   1a2:    fb cf           rjmp   .-10
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">190</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">191</span><span><span style=color:#960050;background-color:#1e0010></span>  __exit:
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">192</span><span>   1a4:    f8 94           cli
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">193</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">194</span><span><span style=color:#960050;background-color:#1e0010></span>  __stop:
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">195</span><span>   1a6:    ff cf           rjmp   .-2           ;  0x1a6
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">196</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">197</span><span><span style=color:#960050;background-color:#1e0010></span>  __flag:   ; OUQP]by]sToWpBCUqz&gt;8BECxw3
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">198</span><span>   1a8:     4f 55 51 50 5d 62 79 5d 73 54 6f 57 70 42 43 55 71 7a 3e 38 42 45 43 78 77 33
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">199</span><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">200</span><span><span style=color:#960050;background-color:#1e0010></span>  __prompt: ; Enter key
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">201</span><span>   1c3:     45 6e 74 65 72 20 6b 65 79 0a 00
+</span></span></code></pre></div><p>Perfect, there is a decoding routine at <code>0x15e</code> for the encoded flag at <code>0x1a8</code>. This routine needs a xor key, which is received using a serial line. We can pursue the static analysis by bruteforcing the key. This python script will do the job:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1</span><span>encoded <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;OUQP]by]sToWpBCUqz&gt;8BECxw3&#34;</span>
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2</span><span>rot_key <span style=color:#f92672>=</span> <span style=color:#ae81ff>4</span>
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3</span><span><span style=color:#66d9ef>for</span> xor_key <span style=color:#f92672>in</span> range(<span style=color:#ae81ff>0xFF</span>):
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4</span><span>    decoded <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;&#34;</span><span style=color:#f92672>.</span>join(
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5</span><span>        [
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6</span><span>            chr((ord(char) <span style=color:#f92672>-</span> rot_key) <span style=color:#f92672>^</span> xor_key)
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7</span><span>            <span style=color:#66d9ef>for</span> i, char <span style=color:#f92672>in</span> enumerate(encoded)
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8</span><span>            <span style=color:#66d9ef>if</span> <span style=color:#f92672>not</span> i <span style=color:#f92672>%</span> <span style=color:#ae81ff>2</span>
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9</span><span>        ]
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10</span><span>    )
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11</span><span>    <span style=color:#66d9ef>if</span> decoded<span style=color:#f92672>.</span>casefold()<span style=color:#f92672>.</span>startswith(<span style=color:#e6db74>&#34;ecw{&#34;</span>):
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12</span><span>        print(<span style=color:#e6db74>f</span><span style=color:#e6db74>&#34;</span><span style=color:#e6db74>{</span>xor_key<span style=color:#e6db74>:</span><span style=color:#e6db74>#04x</span><span style=color:#e6db74>}</span><span style=color:#e6db74>: </span><span style=color:#e6db74>{</span>decoded<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span>)
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1</span><span>$ python3 decode.py
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2</span><span>0x0e ECW{aeb1c401}
+</span></span></code></pre></div><p>Another approach was to emulate the MCU and bruteforce the key like so:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1</span><span>$ qemu-system-avr -S -s -nographic -serial tcp::5678,server<span style=color:#f92672>=</span>on,wait<span style=color:#f92672>=</span>off -machine uno -bios chest.bin
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2</span><span>$ printf <span style=color:#e6db74>&#34;\x0e&#34;</span> | nc localhost <span style=color:#ae81ff>5678</span>
+</span></span><span style=display:flex><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3</span><span>ECW{aeb1c401}
+</span></span></code></pre></div><p>I hope you enjoyed it as much as I do, see you next year!</p></div><footer><section class=see-also><h3 id=see-also-in-ecw>See also in ECW
+<a class=heading-link href=#see-also-in-ecw><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h3><nav><ul><li><a href=/posts/ecw-2022-crackme16/>ECW 2022 - Crackme16</a></li><li><a href=/posts/ecw-2022-minifilter/>ECW 2022 - Minifilter</a></li><li><a href=/posts/ecw-2022-uefi/>ECW 2022 - UEFI</a></li></ul></nav></section></footer></article></section></div><footer class=footer><section class=container></section></footer></main><script src=/js/coder.min.236049395dc3682fb2719640872958e12f1f24067bb09c327b233e6290c7edac.js integrity="sha256-I2BJOV3DaC+ycZZAhylY4S8fJAZ7sJwyeyM+YpDH7aw="></script></body></html>
