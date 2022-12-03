@@ -20,14 +20,10 @@ The IA-32 instruction set has some darn cool instructions.
 
 Instructions such as the `fxsave`/`fxrstor` combo are using a stack to operate:
 
-{{< notice info >}}
 The **fxsave** instruction saves the current state of the x87 FPU, MMX technology, XMM, and MXCSR registers to a 512-byte memory location specified in the destination operand.
-{{< /notice >}}
 
-{{< notice info >}}
 The **fxrstor** instruction reloads the x87 FPU, MMX technology, XMM, and MXCSR registers from the 512-byte memory image specified in the source operand.
 The manual also states that "this data *should* have been written to memory previously using the FXSAVE instruction".
-{{< /notice >}}
 
 The save and restore instructions allows us to do some cool tricks:
 
@@ -80,9 +76,7 @@ _start:
   fxsave [regsave]
 ```
 
-{{< notice note >}}
 The xmm registers are pretty common and frequently replace memcpy during compilation but you might want to copy the `exit_0` code in some other registers than the `xmm0`, `xmm1` and `xmm2` we used previously.
-{{< /notice >}}
 
 At that point, `regsave`+`0xa0` contains the exit_0 function across the saved `xmm0`, `xmm1` and `xmm2` registers:
 
@@ -125,6 +119,4 @@ or:
   jmp rsp
 ```
 
-{{< notice tip >}}
 In x87, the FPU is also using a stack (or barrel). You might find the `fld`/`fstp` instructions useful.
-{{< /notice >}}

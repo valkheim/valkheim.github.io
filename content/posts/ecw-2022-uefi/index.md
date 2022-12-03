@@ -98,9 +98,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 I used the python-eficompressor package which is a python wrapper for the standard decompression algorithm.
 
-{{< notice note >}}
 The standard UEFI decompression is the lzma one, not the tiano custom one. There exists a reference implementation shipped with the UEFI specification.
-{{< /notice >}}
 
 Decode:
 
@@ -286,9 +284,7 @@ Goodboy
 Then some data (3814)
 ```
 
-{{< notice note >}}
-The UEFI specification will help you identify the system table as well as the boot and runtime services tables used here.
-{{< /notice >}}
+The UEFI specification will help you identify the system table as well as the boot and runtime services tables used here.
 
 At this point we identified and isolated th ebasic blocks responsible for the flag decoding (paying attention to utf-16). What we can do is to rot/grep the efi app. I'll do it on the data section specifically:
 
