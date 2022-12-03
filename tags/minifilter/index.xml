@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Minifilter on Valkheim’s personal website</title>
+    <link>https://valkheim.github.io/tags/minifilter/</link>
+    <description>Recent content in Minifilter on Valkheim’s personal website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 31 Oct 2022 00:00:00 +0200</lastBuildDate>
+    <atom:link href="https://valkheim.github.io/tags/minifilter/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ECW 2022 - Minifilter</title>
+      <link>https://valkheim.github.io/posts/ecw-2022-minifilter/</link>
+      <pubDate>Mon, 31 Oct 2022 00:00:00 +0200</pubDate>
+      <guid>https://valkheim.github.io/posts/ecw-2022-minifilter/</guid>
+      <description>Minifilter is a reverse-engineering challenge I designed for the 2022 edition of the European Cyber Week. Here is the source code for this challenge.
+For this challenge, you’re given a truc.sys driver and a file.txt.lock file and the following scenario: &amp;ldquo;some user tried to save his file using her notepad but the saved file looks funny. Find out what’s going on there, find the file.txt cleartext&amp;rdquo;.
+The truc.sys implements a Windows minifilter that is xor-encoding the file when saved to disk.</description>
+    </item>
+  </channel>
+</rss>

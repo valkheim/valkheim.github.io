@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ECW on Valkheim’s personal website</title>
+    <link>https://valkheim.github.io/series/ecw/</link>
+    <description>Recent content in ECW on Valkheim’s personal website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 23 Nov 2023 00:00:00 +0200</lastBuildDate>
+    <atom:link href="https://valkheim.github.io/series/ecw/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ECW 2023 - TyCoon</title>
+      <link>https://valkheim.github.io/posts/ecw-2023-tycoon/</link>
+      <pubDate>Thu, 23 Nov 2023 00:00:00 +0200</pubDate>
+      <guid>https://valkheim.github.io/posts/ecw-2023-tycoon/</guid>
+      <description>TyCoon is a multi-stage challenge I designed for the 2023 finals edition of the European Cyber Week. Here is the source code for this challenge.
+Scenario Link to heading Evil corp installed a malware on John&amp;rsquo;s backup server. That malware is listening for a NUKE order on UDP/9999. When received, it verifies the origin of the request using a DGA and encrypts backup files. It then deletes the symmetric key but leaves an encrypted key for later recovery.</description>
+    </item>
+    <item>
+      <title>ECW 2022 - Minifilter</title>
+      <link>https://valkheim.github.io/posts/ecw-2022-minifilter/</link>
+      <pubDate>Mon, 31 Oct 2022 00:00:00 +0200</pubDate>
+      <guid>https://valkheim.github.io/posts/ecw-2022-minifilter/</guid>
+      <description>Minifilter is a reverse-engineering challenge I designed for the 2022 edition of the European Cyber Week. Here is the source code for this challenge.
+For this challenge, you’re given a truc.sys driver and a file.txt.lock file and the following scenario: &amp;ldquo;some user tried to save his file using her notepad but the saved file looks funny. Find out what’s going on there, find the file.txt cleartext&amp;rdquo;.
+The truc.sys implements a Windows minifilter that is xor-encoding the file when saved to disk.</description>
+    </item>
+    <item>
+      <title>ECW 2022 - UEFI</title>
+      <link>https://valkheim.github.io/posts/ecw-2022-uefi/</link>
+      <pubDate>Mon, 31 Oct 2022 00:00:00 +0200</pubDate>
+      <guid>https://valkheim.github.io/posts/ecw-2022-uefi/</guid>
+      <description>UEFI is a reverse-engineering challenge I designed for the 2022 edition of the European Cyber Week. Here is the source code for this challenge.
+You&amp;rsquo;re given a disk.img file and the following qemu command line:
+1qemu-system-x86_64 -cpu qemu64 \ 2 -drive if=pflash,format=raw,unit=0,file=OVMF_CODE.fd,readonly=on \ 3 -drive if=pflash,format=raw,unit=1,file=OVMF_VARS.fd \ 4 -drive format=raw,file=disk.img,if=virtio \ 5 -net none \ 6 -nographic \ 7 -serial mon:stdio \ 8 -monitor telnet::45454,server,nowait \ This launches an EFI app asking for a password:</description>
+    </item>
+    <item>
+      <title>ECW 2021 - Chest</title>
+      <link>https://valkheim.github.io/posts/ecw-2021-chest/</link>
+      <pubDate>Mon, 25 Oct 2021 00:00:00 +0200</pubDate>
+      <guid>https://valkheim.github.io/posts/ecw-2021-chest/</guid>
+      <description>Chest was one of the reverse-engineering challenge of the European Cyber Week 2021 challenges. I’m the author of that AVR challenge and will detail here my solution.
+The provided file chest.hex file is in Intel HEX format.
+1$ cat chest.hex 2:100000000C9434000C9449000C9449000C94490061 3:100010000C9449000C9449000C9449000C9449003C 4:100020000C9449000C9449000C9449000C9449002C 5:100030000C9449000C9449000C9449000C9449001C 6:100040000C9449000C9449000C9449000C9449000C 7:100050000C9449000C9449000C9449000C944900FC 8:100060000C9449000C94490011241FBECFEFD8E036 9:10007000DEBFCDBF11E0A0E0B1E0E8EAF1E002C0F0 10:1000800005900D92A632B107D9F70E94CA000C94D0 11:10009000D2000C9400001092C5008093C40088E147 12:1000A0008093C10086E08093C20008959091C000C3 13:1000B00095FFFCCF8093C60008950F931F93CF93B5 14:1000C000DF93EC018C01060F111DC017D10721F041 15:1000D00089910E945600F9CFDF91CF911F910F9126 16:1000E00008958091C00087FFFCCF8091C6000895DD 17:1000F0000F931F93CF93DF93EC018C01060F111D1B 18:10010000C017D10721F00E9471008993F9CFDF91C8 19:10011000CF911F910F910895CF93DF93CDB7DEB7A5 20:100120002B970FB6F894DEBF0FBECDBF8BE0EBE18F 21:10013000F1E0DE01119601900D928A95E1F76BE0F6 22:10014000CE0101960E945D000E9471002B960FB6B1 23:10015000F894DEBF0FBECDBFDF91CF910895FF921F 24:100160000F931F93CF93DF93F82EC0E0D1E00CE103 25:1001700011E0888184508F250E94560022960C172A 26:100180001D07B9F78AE0DF91CF911F910F91FF9082 27:100190000C94560087E60E944B000E948C000E943F 28:1001A000AF00FBCFF894FFCF4F5551505D62795DA2 29:1001B00073546F5770424355717A3E3842454378C5 30:0E01C000773300456E746572206B65790A0016 31:00000001FF The Intel HEX is a transitional file format for microcontrollers, (E)PROMs or other devices.</description>
+    </item>
+  </channel>
+</rss>

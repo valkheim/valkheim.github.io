@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>
+  ECW 2023 - TyCoon · Valkheim’s personal website
+</title>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+
+
+
+
+<meta name="author" content="valkheim">
+<meta name="description" content="The ECW 2023 TyCoon official write-up">
+<meta name="keywords" content="blog,developer,personal">
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="ECW 2023 - TyCoon"/>
+<meta name="twitter:description" content="The ECW 2023 TyCoon official write-up"/>
+
+<meta property="og:title" content="ECW 2023 - TyCoon" />
+<meta property="og:description" content="The ECW 2023 TyCoon official write-up" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://valkheim.github.io/posts/ecw-2023-tycoon/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-11-23T00:00:00+02:00" />
+<meta property="article:modified_time" content="2023-11-23T00:00:00+02:00" />
+<meta property="og:see_also" content="https://valkheim.github.io/posts/ecw-2022-minifilter/" /><meta property="og:see_also" content="https://valkheim.github.io/posts/ecw-2022-uefi/" /><meta property="og:see_also" content="https://valkheim.github.io/posts/ecw-2021-chest/" />
+
+
+
+
+
+
+<link rel="canonical" href="https://valkheim.github.io/posts/ecw-2023-tycoon/">
+
+
+<link rel="preload" href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as="font" type="font/woff2" crossorigin>
+
+
+  
+  
+  <link rel="stylesheet" href="/css/coder.min.c4d7e93a158eda5a65b3df343745d2092a0a1e2170feeec909b8a89443903c6a.css" integrity="sha256-xNfpOhWO2lpls980N0XSCSoKHiFw/u7JCbiolEOQPGo=" crossorigin="anonymous" media="screen" />
+
+
+
+
+
+
+  
+    
+    
+    <link rel="stylesheet" href="/css/coder-dark.min.78b5fe3864945faf5207fb8fe3ab2320d49c3365def0e88ac1df0ddadc54a03c.css" integrity="sha256-eLX&#43;OGSUX69SB/uP46sjINScM2Xe8OiKwd8N2txUoDw=" crossorigin="anonymous" media="screen" />
+  
+
+
+
+ 
+
+
+
+
+<link rel="icon" type="image/png" href="/images/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/images/favicon-16x16.png" sizes="16x16">
+
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+
+<meta name="generator" content="Hugo 0.120.4">
+
+
+
+
+<link rel="stylesheet" href="https://valkheim.github.iocss/custom.css">
+  </head>
+
+
+
+
+
+
+<body class="preload-transitions colorscheme-dark">
+  
+<div class="float-container">
+    <a id="dark-mode-toggle" class="colorscheme-toggle">
+        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
+    </a>
+</div>
+
+
+  <main class="wrapper">
+    <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">
+      Valkheim’s personal website
+    </a>
+    
+      <input type="checkbox" id="menu-toggle" />
+      <label class="menu-button float-right" for="menu-toggle">
+        <i class="fa fa-bars fa-fw" aria-hidden="true"></i>
+      </label>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/about/">About</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/posts/">Blog</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/projects/">Projects</a>
+            </li>
+          
+        
+        
+      </ul>
+    
+  </section>
+</nav>
+
+
+    <div class="content">
+      
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">
+            <a class="title-link" href="https://valkheim.github.io/posts/ecw-2023-tycoon/">
+              ECW 2023 - TyCoon
+            </a>
+          </h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <time datetime="2023-11-23T00:00:00&#43;02:00">
+                November 23, 2023
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fa fa-clock-o" aria-hidden="true"></i>
+              12-minute read
+            </span>
+          </div>
+          
+          <div class="categories">
+  <i class="fa fa-folder" aria-hidden="true"></i>
+    <a href="/categories/ctf/">CTF</a></div>
+
+          <div class="tags">
+  <i class="fa fa-tag" aria-hidden="true"></i>
+    <span class="tag">
+      <a href="/tags/ctf/">CTF</a>
+    </span>
+      <span class="separator">•</span>
+    <span class="tag">
+      <a href="/tags/ecw/">ECW</a>
+    </span></div>
+
+        </div>
+      </header>
+
+      <div>
+        
+        <p><strong>TyCoon</strong> is a multi-stage challenge I designed for the 2023 finals edition of the <a href="https://www.european-cyber-week.eu/">European Cyber Week</a>.
+Here is the <a href="https://github.com/valkheim/ECW-2023">source code for this challenge</a>.</p>
+<h2 id="scenario">
+  Scenario
+  <a class="heading-link" href="#scenario">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>Evil corp installed a malware on John&rsquo;s backup server. That malware is listening for a NUKE order on UDP/9999. When received, it verifies the origin of the request using a DGA and encrypts backup files. It then deletes the symmetric key but leaves an encrypted key for later recovery. Finally, it rewrites the bootloader with a ransom note and reboots.</p>
+<p>We are John&rsquo;s friend and our task is to retrieve the secret key for backup files decryption. We have to reverse the malware (we can also restore the bootloader) in order to find the domain name used while the attack was launched. Hopefully, we find the ransomware gang panel and from there we find the key and decrypt John&rsquo;s key and files in order to reveal the flag.</p>
+<h2 id="writeup">
+  Writeup
+  <a class="heading-link" href="#writeup">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>You&rsquo;re given an <code>infected.tgz</code> and your role is to recover encrypted files within.</p>
+<p>Let&rsquo;s take a look at the infected image:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-console" data-lang="console"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span>$ tar zxvf infected.tgz
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>infected.img
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>$ xxd -l <span style="color:#ae81ff">512</span> infected.img
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>00000000: fa31 c08e d88e d0bc 0020 89e5 fbe8 d900  .1....... ......
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>00000010: bb25 7ce8 f800 bb53 7ce8 f200 bb94 7ce8  .%|....S|.....|.
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>00000020: ec00 e9b8 000a 204f 6f6f 7073 2c20 796f  ...... Ooops, yo
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>00000030: 7572 2069 6d70 6f72 7461 6e74 2066 696c  ur important fil
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>00000040: 6573 2061 7265 2065 6e63 7279 7074 6564  es are encrypted
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>00000050: 210a 000a 2054 6f20 6465 6372 7970 7420  !... To decrypt 
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>00000060: 7365 6e64 2031 2e35 2042 5443 2074 6f20  send 1.5 BTC to 
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>00000070: 6d70 3979 6145 7a75 796d 344c 4548 3364  mp9yaEzuym4LEH3d
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>00000080: 7278 6544 5331 7053 5172 4b69 4a7a 4a69  rxeDS1pSQrKiJzJi
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>00000090: 314d 0a00 0a20 5468 656e 2065 6d61 696c  1M... Then email
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>000000a0: 2075 7320 6174 2063 6f6e 7461 6374 4065   us at contact@e
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>000000b0: 7669 6c63 6f72 702e 636f 6d20 7769 7468  vilcorp.com with
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>000000c0: 2079 6f75 2070 6572 736f 6e61 6c20 4944   you personal ID
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>000000d0: 3a20 6e47 5139 7846 3834 430a 0031 c0cd  : nGQ9xF84C..1..
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>000000e0: 16cd 1968 00f0 6af0 cb50 b803 00cd 1058  ...h..j..P.....X
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>000000f0: c350 b40e b00d cd10 b00a cd10 58c3 60b4  .P..........X.`.
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>00000100: 0e8a 073c 0074 05cd 1043 ebf5 61c3 e8ed  ...&lt;.t...C..a...
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span>00000110: ffe8 ddff c3ff ffff ffff ffff ffff ffff  ................
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span>00000120: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span>00000130: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span>00000140: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span>00000150: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span>00000160: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span>00000170: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span>00000180: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span><span>00000190: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span><span>000001a0: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span><span>000001b0: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span><span>000001c0: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span><span>000001d0: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span><span>000001e0: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35</span><span>000001f0: ffff ffff ffff ffff ffff ffff ffff 55aa  ..............U.
+</span></span></code></pre></div><p>When launching (<code>qemu-system-x86_64 -hda infected.img</code>) the image, we indeed
+are launching an infected machine:</p>
+<p><img src="./img/infected.png" alt=""></p>
+<p>The <code>testdisk</code> utility can both write a standard MBR code and reconstruct the
+partition table.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-console" data-lang="console"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>$ cp infected.img bootable.img
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>$ testdisk bootable.img
+</span></span></code></pre></div><p>[find partitions and fix the partition table]
+[repair mbr bootloader code]</p>
+<p>After running it, here is the code obtained that allows us to
+boot the system again:</p>
+<pre tabindex="0"><code>$ xxd -l 512 bootable.img
+00000000: fc31 c08e d031 e48e d88e c0be 007c bf00  .1...1.......|..
+00000010: 06b9 0001 f3a5 beee 07b0 08ea 2006 0000  ............ ...
+00000020: 803e b307 ff75 0488 16b3 0780 3c00 7404  .&gt;...u......&lt;.t.
+00000030: 0806 af07 83ee 10d0 e873 f090 9090 9090  .........s......
+00000040: 9090 9090 9090 9090 9090 9090 9090 9090  ................
+00000050: 9090 9090 9090 9090 9090 9090 9090 9090  ................
+00000060: 9090 9090 9090 9090 9090 9090 9090 9090  ................
+00000070: 9090 9090 9090 9090 9090 9090 9090 bebe  ................
+00000080: 07b0 00b9 0400 803c 0075 6efe c083 c610  .......&lt;.un.....
+00000090: e2f4 31db b40e be9d 078a 0eaf 07ac d0e9  ..1.............
+000000a0: 7302 cd10 08c9 75f5 b03a cd10 31c0 cd16  s.....u..:..1...
+000000b0: 3c00 74f8 be8b 07b9 0200 e8ba 003c 0d74  &lt;.t..........&lt;.t
+000000c0: b43c 6172 063c 7a77 022c 2088 c3be 9d07  .&lt;ar.&lt;zw., .....
+000000d0: 8a0e af07 acd0 e973 0438 c374 0608 c975  .......s.8.t...u
+000000e0: f3eb afb8 0d0e 31db cd10 8d84 6200 3c07  ......1.....b.&lt;.
+000000f0: 7507 b01f a2af 07eb 9931 d2b9 0100 3c04  u........1....&lt;.
+00000100: 7411 73f3 30e4 b104 d2e0 bebe 0701 c68a  t.s.0...........
+00000110: 16b3 07bf 0500 56f6 c280 7431 b441 bbaa  ......V...t1.A..
+00000120: 5552 cd13 5a5e 5672 1e81 fb55 aa75 18f6  UR..Z^Vr...U.u..
+00000130: c101 7413 8b44 088b 5c0a be8d 0789 4408  ..t..D..\.....D.
+00000140: 895c 0ab4 42eb 0c8a 7401 8b4c 02b8 0102  .\..B...t..L....
+00000150: bb00 7c50 c606 8f07 01cd 1358 5e73 054f  ..|P.......X^s.O
+00000160: 75b4 eb93 813e fe7d 55aa 75f6 ea00 7c00  u....&gt;.}U.u...|.
+00000170: 00be 8307 b90a 0050 b40e 31db accd 10e2  .......P..1.....
+00000180: fb58 c354 6573 7444 6973 6b0d 0a10 0001  .X.TestDisk.....
+00000190: 0000 7c00 0000 0000 0000 0000 0031 3233  ..|..........123
+000001a0: 3446 0000 414e 4454 6d62 7200 0202 021f  4F..ANDTmbr.....
+000001b0: c700 0080 0000 0000 ffff ffff ffff 8020  ............... 
+000001c0: 2100 83df 130c 0008 0000 0020 0300 00df  !.......... ....
+000001d0: 140c 8225 174e 0028 0300 0000 1000 0025  ...%.N.(.......%
+000001e0: 184e 8315 5005 0028 1300 00d8 2c00 0000  .N..P..(....,...
+000001f0: 0000 0000 0000 0000 0000 0000 0000 55aa  ..............U.
+</code></pre><p>Using testdisk, we found an recovered the <code>/backup</code> folder but also discovered
+some suspicious files under <code>/root</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-console" data-lang="console"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>$ ls -R recovery/
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>recovery/:
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span>backup  root
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span><span><span style="color:#960050;background-color:#1e0010"></span>recovery/backup:
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span><span>Artists.csv  secrets.db.enc
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7</span><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8</span><span><span style="color:#960050;background-color:#1e0010"></span>recovery/root:
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">9</span><span>implant  key
+</span></span></code></pre></div><p>The <code>/backup/Artists.csv</code> file looks clean, we can give it to John. However,
+its secrets.db.enc looks like it has been encrypted, let&rsquo;s fix that for him.</p>
+<p>It looks like <code>/root/implant</code> is the malware we&rsquo;re looking for!
+There is also a <code>/root/key</code> file.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-console" data-lang="console"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span>/root$ file *
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>implant: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, stripped
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>key:     data
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>/root$ xxd key
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>00000000: 0ac8 6aa7 ce0f 9af6 fbff 91f9 c6d9 9dee  ..j.............
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>00000010: 9450 a659 a22e 0ddc b51b 1a27 2361 6b53  .P.Y.......&#39;#akS
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>00000020: 4ca7 b6e4 3852 4edb bca3 79fa 53c9 0fcd  L...8RN...y.S...
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>00000030: d29a d806 630f 9a0c 04ab 584f 1d07 b7bc  ....c.....XO....
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>00000040: 64d7 a492 edac 647b f5f1 4a50 e162 46c6  d.....d{..JP.bF.
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>00000050: 3724 718a 957c 3c97 3b46 458d 2da7 d72e  7$q..|&lt;.;FE.-...
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>00000060: a60e 6af8 4b29 b9f8 ed40 a4ec e333 99d7  ..j.K)...@...3..
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>00000070: 598e 8ee5 6517 02c6 7151 032a cb18 acca  Y...e...qQ.*....
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>00000080: 8449 8751 0017 0e82 6555 7717 aeeb 1501  .I.Q....eUw.....
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>00000090: f09e 0ffd de19 d0d6 f681 8862 a7be 26da  ...........b..&amp;.
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>000000a0: daac 0c8a 92ef 64b6 a129 8566 1b17 23a1  ......d..).f..#.
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>000000b0: 8f42 c5c1 d08b 76e2 688f 2ee1 60f0 0072  .B....v.h...`..r
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>000000c0: 0168 2453 5b90 a8e7 5479 3e9f 4114 2d9a  .h$S[...Ty&gt;.A.-.
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>000000d0: 0dfc f8f9 dd6b ed5f fe45 3040 92d2 aff4  .....k._.E0@....
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>000000e0: 858d d4f6 0ee5 c785 6f45 db84 77e5 3742  ........oE..w.7B
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>000000f0: 33ec 8c60 d9fd ae72 0989 83d4 53f5 f012  3..`...r....S...
+</span></span></code></pre></div><p>There is no symbols but we can extract a lot of juicy strings from the implant:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span>shred -zuf key.bin
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>shred /etc/hosts
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>/root/secret
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>/user/secret
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>/root/backup
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>/user/backup
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>/dev/sda
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>/dev/hda
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>/dev/sdb
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>/dev/hdb
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>/dev/sdc
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>/dev/hdc
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>/dev/sdd
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>/dev/hdd
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>/dev/sde
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>/dev/hde
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>/dev/sdf
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>/dev/hdf
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>/dev/sdg
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>/dev/hdg
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span>current domain is %s.%s
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span>openssl enc -aes-256-cbc -salt -pbkdf2 -in 
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span> -out 
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span>.enc -pass file:./key.bin
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span>shred -uzf 
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span> Ooops, your important files are encrypted!
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span> To decrypt send 1.5 BTC to mp9yaEzuym4LEH3drxeDS1pSQrKiJzJi1M
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span> Then email us at contact@evilcorp.com with you personal ID: nGQ9xF84C
+</span></span></code></pre></div><p>We can understand some bits of information out of those strings:</p>
+<ol>
+<li>The files have been encrypted using a <code>key.bin</code> key file that was then
+deleted using <code>shred</code>, so we don&rsquo;t try to recover it.</li>
+<li>Both the <code>secret</code> and <code>backup</code> directories of <code>root</code> and <code>user</code> folders have
+been targeted.</li>
+<li>A format-string is mentioning what looks like a domain name.</li>
+<li>The <code>/etc/hosts</code> file also has been <code>shred</code>ded.</li>
+</ol>
+<p>Trying to use the left-over <code>/root/key</code> file leads to nothing. What about the
+domain thing?</p>
+<p>Before handling incoming commands, the implant is checking the domain name
+associated with the sender. We can recover the domain using the domain name
+generation algorithm at <code>0x4011F1</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#66d9ef">void</span> <span style="color:#66d9ef">__fastcall</span> __noreturn <span style="color:#a6e22e">sub_4011F1</span>(<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> a1)
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>  <span style="color:#66d9ef">__int64</span> v1; <span style="color:#75715e">// rax
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">__int64</span> v2; <span style="color:#75715e">// rax
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">__int64</span> v3; <span style="color:#75715e">// rax
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> v4; <span style="color:#75715e">// [rsp+8h] [rbp-2E0h] BYREF
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">int</span> cmd; <span style="color:#75715e">// [rsp+Ch] [rbp-2DCh] BYREF
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">char</span> v6[<span style="color:#ae81ff">32</span>]; <span style="color:#75715e">// [rsp+10h] [rbp-2D8h] BYREF
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">__int16</span> v7[<span style="color:#ae81ff">65</span>]; <span style="color:#75715e">// [rsp+30h] [rbp-2B8h] BYREF
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">char</span> v8[<span style="color:#ae81ff">255</span>]; <span style="color:#75715e">// [rsp+B2h] [rbp-236h] BYREF
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">char</span> v9[<span style="color:#ae81ff">311</span>]; <span style="color:#75715e">// [rsp+1B1h] [rbp-137h] BYREF
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>  <span style="color:#66d9ef">while</span> ( <span style="color:#ae81ff">1</span> )
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>  {
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>    <span style="color:#66d9ef">while</span> ( <span style="color:#ae81ff">1</span> )
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>      <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>        v4 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x80</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>      <span style="color:#66d9ef">while</span> ( <span style="color:#a6e22e">recvfrom_4049E0</span>(a1, <span style="color:#f92672">&amp;</span>cmd, <span style="color:#ae81ff">4LL</span>, <span style="color:#ae81ff">0LL</span>, v7, <span style="color:#f92672">&amp;</span>v4) <span style="color:#f92672">!=</span> <span style="color:#ae81ff">4</span> );
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>      <span style="color:#66d9ef">if</span> ( <span style="color:#f92672">!</span>(<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span>)<span style="color:#a6e22e">getnameinfo_4025E0</span>(v7, v4, (<span style="color:#66d9ef">__int64</span>)v8, <span style="color:#ae81ff">0xFFu</span>, (<span style="color:#66d9ef">__int64</span>)v6, <span style="color:#ae81ff">0x20u</span>, <span style="color:#ae81ff">2</span>) )
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span>      {
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span>        <span style="color:#a6e22e">generate_domain_401517</span>();
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span>        <span style="color:#a6e22e">memset</span>(v9, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0xFFuLL</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span>        v1 <span style="color:#f92672">=</span> <span style="color:#a6e22e">strcat_40A300</span>((<span style="color:#66d9ef">__int64</span>)v9, (<span style="color:#66d9ef">__int64</span>)<span style="color:#f92672">&amp;</span>g_domain_name);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span>        v2 <span style="color:#f92672">=</span> <span style="color:#a6e22e">strcat_40A300</span>(v1, (<span style="color:#66d9ef">__int64</span>)<span style="color:#f92672">&amp;</span>string_dot_414000);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span>        v3 <span style="color:#f92672">=</span> <span style="color:#a6e22e">strcat_40A300</span>(v2, (<span style="color:#66d9ef">__int64</span>)<span style="color:#f92672">&amp;</span>string_bzh_414002);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span>        <span style="color:#66d9ef">if</span> ( <span style="color:#f92672">!</span>(<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span>)<span style="color:#a6e22e">sub_40A440</span>(v8, v3) )
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span>          <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span><span>      }
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span><span>    <span style="color:#66d9ef">if</span> ( <span style="color:#f92672">!</span>(<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span>)<span style="color:#a6e22e">sub_40A510</span>(<span style="color:#f92672">&amp;</span>cmd, <span style="color:#e6db74">&#34;ABRT&#34;</span>, <span style="color:#ae81ff">4LL</span>) )
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span><span>      <span style="color:#a6e22e">abrt</span>();
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span><span>    <span style="color:#66d9ef">if</span> ( <span style="color:#f92672">!</span>(<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span>)<span style="color:#a6e22e">sub_40A510</span>(<span style="color:#f92672">&amp;</span>cmd, <span style="color:#e6db74">&#34;NUKE&#34;</span>, <span style="color:#ae81ff">4LL</span>) )
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span><span>      <span style="color:#a6e22e">nuke</span>();
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35</span><span>    cmd <span style="color:#f92672">=</span> <span style="color:#ae81ff">4932417</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36</span><span>    <span style="color:#a6e22e">sub_405AA0</span>(a1, <span style="color:#f92672">&amp;</span>cmd, <span style="color:#ae81ff">4LL</span>, <span style="color:#ae81ff">0LL</span>, v7, v4);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37</span><span>  }
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38</span><span>}
+</span></span></code></pre></div><p>The domain name is generated at generate_domain_401517 and is appended with a
+dot at string_dot_414000 and a &ldquo;bzh&rdquo; TLD at string_bzh_414002.</p>
+<p>Most of the job now is to reverse the generate_domain_401517 algorithm:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">__int64</span> <span style="color:#a6e22e">generate_domain_401517</span>()
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>  <span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>v0; <span style="color:#75715e">// rax
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">__m128</span> day; <span style="color:#75715e">// xmm1
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">__m128</span> year; <span style="color:#75715e">// xmm0
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>domain; <span style="color:#75715e">// rcx
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">__m128</span> month; <span style="color:#75715e">// xmm2
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">__int64</span> v5; <span style="color:#75715e">// xmm3_8
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">__int64</span> result; <span style="color:#75715e">// rax
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">__int64</span> v7; <span style="color:#75715e">// [rsp+8h] [rbp-10h] BYREF
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>  v7 <span style="color:#f92672">=</span> <span style="color:#a6e22e">time_40B0C0</span>(<span style="color:#ae81ff">0LL</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>  v0 <span style="color:#f92672">=</span> (<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>)<span style="color:#a6e22e">localtime_40B020</span>(<span style="color:#f92672">&amp;</span>v7);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>  day <span style="color:#f92672">=</span> (<span style="color:#66d9ef">__m128</span>)(<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">__int64</span>)v0[<span style="color:#ae81ff">3</span>];
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>  year <span style="color:#f92672">=</span> (<span style="color:#66d9ef">__m128</span>)(<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">__int64</span>)(v0[<span style="color:#ae81ff">5</span>] <span style="color:#f92672">+</span> <span style="color:#ae81ff">1900</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>  domain <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)<span style="color:#f92672">&amp;</span>g_domain_name;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>  month <span style="color:#f92672">=</span> (<span style="color:#66d9ef">__m128</span>)(<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">__int64</span>)(v0[<span style="color:#ae81ff">4</span>] <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>  <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>  {
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>    <span style="color:#f92672">++</span>domain;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span>    month <span style="color:#f92672">=</span> <span style="color:#a6e22e">_mm_xor_ps</span>(
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span>              (<span style="color:#66d9ef">__m128</span>)<span style="color:#a6e22e">_mm_slli_epi64</span>((<span style="color:#66d9ef">__m128i</span>)<span style="color:#a6e22e">_mm_and_ps</span>(month, (<span style="color:#66d9ef">__m128</span>)xmmword_4141A0), <span style="color:#ae81ff">4u</span>),
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span>              (<span style="color:#66d9ef">__m128</span>)<span style="color:#a6e22e">_mm_srli_epi64</span>((<span style="color:#66d9ef">__m128i</span>)<span style="color:#a6e22e">_mm_xor_ps</span>((<span style="color:#66d9ef">__m128</span>)<span style="color:#a6e22e">_mm_slli_epi64</span>((<span style="color:#66d9ef">__m128i</span>)month, <span style="color:#ae81ff">2u</span>), month), <span style="color:#ae81ff">1u</span>));
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span>    year <span style="color:#f92672">=</span> <span style="color:#a6e22e">_mm_xor_ps</span>(
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span>             <span style="color:#a6e22e">_mm_and_ps</span>((<span style="color:#66d9ef">__m128</span>)<span style="color:#a6e22e">_mm_slli_epi64</span>((<span style="color:#66d9ef">__m128i</span>)year, <span style="color:#ae81ff">8u</span>), (<span style="color:#66d9ef">__m128</span>)xmmword_4141B0),
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span>             (<span style="color:#66d9ef">__m128</span>)<span style="color:#a6e22e">_mm_srli_epi64</span>((<span style="color:#66d9ef">__m128i</span>)<span style="color:#a6e22e">_mm_xor_ps</span>((<span style="color:#66d9ef">__m128</span>)<span style="color:#a6e22e">_mm_slli_epi64</span>((<span style="color:#66d9ef">__m128i</span>)year, <span style="color:#ae81ff">3u</span>), year), <span style="color:#ae81ff">4u</span>));
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span>    day <span style="color:#f92672">=</span> <span style="color:#a6e22e">_mm_xor_ps</span>(
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span>            <span style="color:#a6e22e">_mm_and_ps</span>((<span style="color:#66d9ef">__m128</span>)<span style="color:#a6e22e">_mm_slli_epi64</span>((<span style="color:#66d9ef">__m128i</span>)day, <span style="color:#ae81ff">4u</span>), (<span style="color:#66d9ef">__m128</span>)xmmword_4141C0),
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span><span>            (<span style="color:#66d9ef">__m128</span>)<span style="color:#a6e22e">_mm_srli_epi64</span>((<span style="color:#66d9ef">__m128i</span>)<span style="color:#a6e22e">_mm_xor_ps</span>((<span style="color:#66d9ef">__m128</span>)<span style="color:#a6e22e">_mm_slli_epi64</span>((<span style="color:#66d9ef">__m128i</span>)day, <span style="color:#ae81ff">0x10u</span>), day), <span style="color:#ae81ff">2u</span>));
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span><span>    v5 <span style="color:#f92672">=</span> month.m128_u64[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">^</span> year.m128_u64[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">^</span> day.m128_u64[<span style="color:#ae81ff">0</span>];
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span><span>    result <span style="color:#f92672">=</span> v5 <span style="color:#f92672">/</span> <span style="color:#ae81ff">0x19</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span><span>    <span style="color:#f92672">*</span>(domain <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">=</span> v5 <span style="color:#f92672">%</span> <span style="color:#ae81ff">0x19</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">97</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span><span>  }
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span><span>  <span style="color:#66d9ef">while</span> ( (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)<span style="color:#f92672">&amp;</span>g_domain_name <span style="color:#f92672">+</span> <span style="color:#ae81ff">9</span> <span style="color:#f92672">!=</span> domain );
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35</span><span>  end_of_g_domain_name_41A631 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36</span><span>  <span style="color:#66d9ef">return</span> result;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37</span><span>}
+</span></span></code></pre></div><p>The nine domain name characters are generated from a <code>struct tm</code> structure
+obtained from the <code>localtime(time(NULL))</code> call. The assembly for the loop may
+be more helpful than the decompiler to recover the DGA:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span>loc_401577:
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span><span style="color:#a6e22e">movaps</span>  <span style="color:#66d9ef">xmm7</span>, <span style="color:#66d9ef">xmm2</span>      <span style="color:#75715e">; Move Aligned Four Packed Single-FP
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">movaps</span>  <span style="color:#66d9ef">xmm3</span>, <span style="color:#66d9ef">cs</span>:<span style="color:#66d9ef">xmmword_4141A0</span> <span style="color:#75715e">; Move Aligned Four Packed Single-FP
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">xor</span>     <span style="color:#66d9ef">edx</span>, <span style="color:#66d9ef">edx</span>        <span style="color:#75715e">; Logical Exclusive OR
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">inc</span>     <span style="color:#66d9ef">rcx</span>             <span style="color:#75715e">; Increment by 1
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">psllq</span>   <span style="color:#66d9ef">xmm7</span>, <span style="color:#ae81ff">2</span>         <span style="color:#75715e">; Packed Shift Left Logical (Qword)
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">movaps</span>  <span style="color:#66d9ef">xmm6</span>, <span style="color:#66d9ef">xmm7</span>      <span style="color:#75715e">; Move Aligned Four Packed Single-FP
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">movaps</span>  <span style="color:#66d9ef">xmm7</span>, <span style="color:#66d9ef">xmm0</span>      <span style="color:#75715e">; Move Aligned Four Packed Single-FP
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">xorps</span>   <span style="color:#66d9ef">xmm6</span>, <span style="color:#66d9ef">xmm2</span>      <span style="color:#75715e">; Bitwise Logical XOR for Single-FP Data
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">psllq</span>   <span style="color:#66d9ef">xmm7</span>, <span style="color:#ae81ff">3</span>         <span style="color:#75715e">; Packed Shift Left Logical (Qword)
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">andps</span>   <span style="color:#66d9ef">xmm2</span>, <span style="color:#66d9ef">xmm3</span>      <span style="color:#75715e">; Bitwise Logical And for Single-FP
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">psrlq</span>   <span style="color:#66d9ef">xmm6</span>, <span style="color:#ae81ff">1</span>         <span style="color:#75715e">; Packed Shift Right Logical (Qword)
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">psllq</span>   <span style="color:#66d9ef">xmm2</span>, <span style="color:#ae81ff">4</span>         <span style="color:#75715e">; Packed Shift Left Logical (Qword)
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">movaps</span>  <span style="color:#66d9ef">xmm3</span>, <span style="color:#66d9ef">xmm7</span>      <span style="color:#75715e">; Move Aligned Four Packed Single-FP
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">xorps</span>   <span style="color:#66d9ef">xmm2</span>, <span style="color:#66d9ef">xmm6</span>      <span style="color:#75715e">; Bitwise Logical XOR for Single-FP Data
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">xorps</span>   <span style="color:#66d9ef">xmm3</span>, <span style="color:#66d9ef">xmm0</span>      <span style="color:#75715e">; Bitwise Logical XOR for Single-FP Data
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">movaps</span>  <span style="color:#66d9ef">xmm6</span>, <span style="color:#66d9ef">xmm1</span>      <span style="color:#75715e">; Move Aligned Four Packed Single-FP
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">psllq</span>   <span style="color:#66d9ef">xmm0</span>, <span style="color:#ae81ff">8</span>         <span style="color:#75715e">; Packed Shift Left Logical (Qword)
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">psrlq</span>   <span style="color:#66d9ef">xmm3</span>, <span style="color:#ae81ff">4</span>         <span style="color:#75715e">; Packed Shift Right Logical (Qword)
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">movaps</span>  <span style="color:#66d9ef">xmm7</span>, <span style="color:#66d9ef">xmm2</span>      <span style="color:#75715e">; Move Aligned Four Packed Single-FP
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">andps</span>   <span style="color:#66d9ef">xmm0</span>, <span style="color:#66d9ef">xmm5</span>      <span style="color:#75715e">; Bitwise Logical And for Single-FP
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">psllq</span>   <span style="color:#66d9ef">xmm6</span>, <span style="color:#ae81ff">10</span><span style="color:#66d9ef">h</span>       <span style="color:#75715e">; Packed Shift Left Logical (Qword)
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">xorps</span>   <span style="color:#66d9ef">xmm0</span>, <span style="color:#66d9ef">xmm3</span>      <span style="color:#75715e">; Bitwise Logical XOR for Single-FP Data
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">movaps</span>  <span style="color:#66d9ef">xmm3</span>, <span style="color:#66d9ef">xmm6</span>      <span style="color:#75715e">; Move Aligned Four Packed Single-FP
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">xorps</span>   <span style="color:#66d9ef">xmm3</span>, <span style="color:#66d9ef">xmm1</span>      <span style="color:#75715e">; Bitwise Logical XOR for Single-FP Data
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">psllq</span>   <span style="color:#66d9ef">xmm1</span>, <span style="color:#ae81ff">4</span>         <span style="color:#75715e">; Packed Shift Left Logical (Qword)
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">xorps</span>   <span style="color:#66d9ef">xmm7</span>, <span style="color:#66d9ef">xmm0</span>      <span style="color:#75715e">; Bitwise Logical XOR for Single-FP Data
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">psrlq</span>   <span style="color:#66d9ef">xmm3</span>, <span style="color:#ae81ff">2</span>         <span style="color:#75715e">; Packed Shift Right Logical (Qword)
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">andps</span>   <span style="color:#66d9ef">xmm1</span>, <span style="color:#66d9ef">xmm4</span>      <span style="color:#75715e">; Bitwise Logical And for Single-FP
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">xorps</span>   <span style="color:#66d9ef">xmm1</span>, <span style="color:#66d9ef">xmm3</span>      <span style="color:#75715e">; Bitwise Logical XOR for Single-FP Data
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">movaps</span>  <span style="color:#66d9ef">xmm3</span>, <span style="color:#66d9ef">xmm7</span>      <span style="color:#75715e">; Move Aligned Four Packed Single-FP
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">xorps</span>   <span style="color:#66d9ef">xmm3</span>, <span style="color:#66d9ef">xmm1</span>      <span style="color:#75715e">; Bitwise Logical XOR for Single-FP Data
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">movq</span>    <span style="color:#66d9ef">rax</span>, <span style="color:#66d9ef">xmm3</span>       <span style="color:#75715e">; Move 64 bits
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">div</span>     <span style="color:#66d9ef">rsi</span>             <span style="color:#75715e">; Unsigned Divide
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">add</span>     <span style="color:#66d9ef">edx</span>, <span style="color:#ae81ff">61</span><span style="color:#66d9ef">h</span> <span style="color:#75715e">; &#39;a&#39;  ; Add
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">mov</span>     [<span style="color:#66d9ef">rcx-1</span>], <span style="color:#66d9ef">dl</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37</span><span><span style="color:#a6e22e">cmp</span>     <span style="color:#66d9ef">rdi</span>, <span style="color:#66d9ef">rcx</span>        <span style="color:#75715e">; Compare Two Operands
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">jnz</span>     <span style="color:#66d9ef">loc_401577</span>      <span style="color:#75715e">; Jump if Not Zero (ZF=0)
+</span></span></span></code></pre></div><p>You can either debug, emulate it or reimplement it.</p>
+<p>Here is a C transcript or the original DGA:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdint.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;err.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> ac, <span style="color:#66d9ef">char</span><span style="color:#f92672">**</span>av)
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>    <span style="color:#66d9ef">if</span> (ac <span style="color:#f92672">!=</span> <span style="color:#ae81ff">4</span>)
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>        <span style="color:#a6e22e">errx</span>(EXIT_FAILURE, <span style="color:#e6db74">&#34;usage: %s &lt;month&gt; &lt;day&gt; &lt;year&gt;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, av[<span style="color:#ae81ff">0</span>]);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>    <span style="color:#66d9ef">char</span> subdomain[<span style="color:#ae81ff">10</span>];
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>    <span style="color:#66d9ef">uint64_t</span> month <span style="color:#f92672">=</span> (<span style="color:#66d9ef">uint64_t</span>)<span style="color:#a6e22e">atoi</span>(av[<span style="color:#ae81ff">1</span>]);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>    <span style="color:#66d9ef">uint64_t</span> day <span style="color:#f92672">=</span> (<span style="color:#66d9ef">uint64_t</span>)<span style="color:#a6e22e">atoi</span>(av[<span style="color:#ae81ff">2</span>]);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>    <span style="color:#66d9ef">uint64_t</span> year <span style="color:#f92672">=</span> (<span style="color:#66d9ef">uint64_t</span>)<span style="color:#a6e22e">atoi</span>(av[<span style="color:#ae81ff">3</span>]);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>    <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">unsigned</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span> ; i <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">sizeof</span>(subdomain) <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>; <span style="color:#f92672">++</span>i)
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>        month <span style="color:#f92672">=</span> ((month <span style="color:#f92672">^</span> <span style="color:#ae81ff">4</span> <span style="color:#f92672">*</span> month) <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">^</span> <span style="color:#ae81ff">16</span> <span style="color:#f92672">*</span> (month <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0xFFFFFFF2</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>        year <span style="color:#f92672">=</span> ((year <span style="color:#f92672">^</span> <span style="color:#ae81ff">8</span> <span style="color:#f92672">*</span> year) <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">4</span>) <span style="color:#f92672">^</span> ((year <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0xFFFFFFF4</span>) <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">8</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>        day <span style="color:#f92672">=</span> ((day <span style="color:#f92672">^</span> (day <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">16</span>)) <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">^</span> ((day <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0xFFFFFFFA</span>) <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">4</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>        subdomain[i] <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span>)(((year <span style="color:#f92672">^</span> month <span style="color:#f92672">^</span> day) <span style="color:#f92672">%</span> <span style="color:#ae81ff">25</span>) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;a&#39;</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span>    subdomain[<span style="color:#66d9ef">sizeof</span>(subdomain)<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span>    <span style="color:#a6e22e">printf</span>(<span style="color:#e6db74">&#34;subdomain: %s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, subdomain);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span>}
+</span></span></code></pre></div><p>With such algorithm, we are able to recover the domain name generated for the
+date of the attack:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-console" data-lang="console"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>$ ./dga <span style="color:#ae81ff">07</span> <span style="color:#ae81ff">26</span> <span style="color:#ae81ff">2023</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>subdomain: uxigxmxvm
+</span></span></code></pre></div><p>Now let&rsquo;s hack back those hackers at <code>uxigxmxvm.bzh</code>!</p>
+<p><img src="./img/tycon_leaks.png" alt=""></p>
+<p>It&rsquo;s a static website leaking data from those hackers victims. Can we find
+John&rsquo;s data over there? Definitely not, but as we explore the website, it
+stands out that each company data is leaked under <code>/files/&lt;ID&gt;</code> and that ID
+looks pretty much like the one we were given in the corrupted bootloader.
+By Looking at <code>/files/nGQ9xF84C/</code>, we recover a <code>key.pem</code> key file.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-console" data-lang="console"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span>$ wget uxigxmxvm.bzh/files/nGQ9xF84C/key.pem
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>$ cat key.pem
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>-----BEGIN PRIVATE KEY-----
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDChc3ubr7clJtt
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>RGVTIKmaZdRDMETKZIOLIehLH3U52QJ1Xa1ruZ+PC1BKWVNPqS/E3x9p5CSec6Ba
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>nJtn7KI1m7Qxu8uCtkr8xCZ1jFge1KYmYh4u21r7fJzdXM9qyxgML3knKi4GV0BA
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>clZ6UXX6m/432CzufbmDhMRSd7XfdQed8X2SK7gwtePOmqY4AmnRl9ozLtR+qTff
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>sv5FtZQcxyA5FHR9MQlTaYzg+mKrvtax+vKZg+INfolQobXKoi17nLwHhZ5Ow8Ha
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>xyLkqMfBC3hej6qo2yBY5JzxgIGhufjXV1F82IbFFx6B7JY2hmvhjiAG4dqfkHWw
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>q+ojOYoVAgMBAAECggEAHvLAjEuaBH3aP/yumEFX6o+Clrv9EyxXEhGaI9WZ8NME
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>xUfbBGAbMYbNxpPGoaPGd1k+Zg+yVHQLUk9HRGC4KrTz6tO43GTaB7QXda1CBIm1
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>nja5xvUHA9WpdBNE5stFhK7K5OnHj80IP8NRMeh4T5/LnEvsU3dfnBFJVjY4kpgE
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>tXsZxBU8NaR6XtZEx1ohtUwVMZth4ZMgNs1b24acQaH0KK40sG8sbzqhdA2Qk+cQ
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>XKPyji6uS4stzpxQrgC4eyD2aM/Oq0g7zSf+HfhCY03Fvx97G4rDRtpP4KIW2Htg
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>gkoaVwOBXiNsqMD935n09Xwplk9Lawioe/f8LQEQQwKBgQDsr6SLMDn4oMQFombN
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>lgKcejI93XDOHpJS9Oxh/Y6yLdAeQUaLUX7DfR90XiTLRuP6BiljWN8Dh66nrklo
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>JBYUW1FIZeqL2Woa14BT0MZN14x0c3wunqR1zQWlGmwROc+phAJp/Y2Q/AyDDkrn
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>wvV01/tT0BJ+0jcfcI5gV134wwKBgQDSZV7Pf3GOD2kH5jjCBHWNXVf45UJktqjk
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>3I//rOfy4XO2bR8TKufo8mM8lOmRxsThpWgxnKjE+6qisSahqwObB9R73aebPFBq
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>KMCNOMsjj5+isuhhwaH5rtS1OUCBpM+mkjkZmua6tJtiH1UhEPUJoPmEf4+CcGF8
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span>3RTW1jeERwKBgQCtHPKek1FzVjLJZDUI3VVfmcixkwt01stzPYy/RzNdg0CbQGcW
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span>cy7iUNv2wvzqaRlJv8P51ACZll3aaxFpyCsWDIxxBYn9a7G9nC1SIHtKaANlESqc
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span>9o+XUbN1RNQR7VTDybfySe+HQbLtEEEdLm1VXruGW8OLWrnSlwKr2Hr0/QKBgQDK
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span>EK2UH1QSGd7HxWYxgFLd6A47bwPq8jsXQnXSGl/SNpEJXZgAsq50XYbNgj8o0Hv6
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span>Mv/01f6I4SOqiPUPQ818sXJzXBhC0RRyQJ1dhHQkvSWV/rmMWYmU4UJMoqW/XWhJ
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span>FBpe6xQ5sIejH3CFB2IvUzkQ9eoAXqpiX3pKMwaytQKBgQCYVJ5KtW20f9Ox7qJZ
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span>2MDMu7L5gj/6C02fGN+bLLrudyxBcYvqiSzwE7Q5ZG6TRUGWSNASl9SqsK24MI2E
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span>LdgAWInYleCS8Jali1wZtXGxtpvdRYlLiDtV58Qr7RBcpfLDVoAxyiCFtWearZqZ
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span><span>AJbu+b9e33Z4SzI17gTHeRvcRw==
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span><span>-----END PRIVATE KEY-----
+</span></span></code></pre></div><p>On John&rsquo;s machine, the implant used a <code>key.bin</code> file for file encryption before
+deleting it. However, it left a <code>key</code> file.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-console" data-lang="console"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>$ openssl rsautl -decrypt -inkey key.pem -in recovery/root/key -out key.bin
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>$ cat key.bin
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span>UyhXwZQ+cxB+QunKoBA2Nbzj5SfhoBVFtFUyoS25EMg=
+</span></span></code></pre></div><p>It looks like we recovered the 256 bits key used for file encryption.
+By looking at the implant strings, aes cbc was used, let&rsquo;s try that
+on secrets.db.enc:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-console" data-lang="console"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>$ openssl enc -d -aes-256-cbc -pbkdf2 -in recovery/backup/secrets.db.enc -out secrets.db -pass file:key.bin
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>$ file secrets.db 
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span>secrets.db: SQLite 3.x database, last written using SQLite version 3038001
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span>$ sqlite3 secrets.db .dump
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span><span>PRAGMA foreign_keys=OFF;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span><span>BEGIN TRANSACTION;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7</span><span>CREATE TABLE secrets(flag text not null);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8</span><span>INSERT INTO secrets VALUES(&#39;ECW{all_your_file_belong_to_us}&#39;);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">9</span><span>COMMIT;
+</span></span></code></pre></div><p>Awesome, here is your flag!</p>
+
+      </div>
+
+
+      <footer>
+        
+
+<section class="see-also">
+  
+    
+    
+    
+      <h3 id="see-also-in-ecw">
+        See also in ECW
+        <a class="heading-link" href="#see-also-in-ecw">
+          <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+          <span class="sr-only">Link to heading</span>
+        </a>
+      </h3>
+      <nav>
+        <ul>
+        
+        
+          
+        
+          
+            <li>
+              <a href="/posts/ecw-2022-minifilter/">ECW 2022 - Minifilter</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="/posts/ecw-2022-uefi/">ECW 2022 - UEFI</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="/posts/ecw-2021-chest/">ECW 2021 - Chest</a>
+            </li>
+          
+        
+        </ul>
+      </nav>
+    
+  
+</section>
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+    </div>
+
+    <footer class="footer">
+  <section class="container">
+    
+  </section>
+</footer>
+
+  </main>
+
+  
+
+  
+  
+  <script src="/js/coder.min.236049395dc3682fb2719640872958e12f1f24067bb09c327b233e6290c7edac.js" integrity="sha256-I2BJOV3DaC&#43;ycZZAhylY4S8fJAZ7sJwyeyM&#43;YpDH7aw="></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+
+</html>

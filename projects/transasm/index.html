@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>
+  Transasm - x86 redundancy · Valkheim’s personal website
+</title>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+
+
+
+
+<meta name="author" content="valkheim">
+<meta name="description" content="Exploiting x86 machine code redundancy to create polymorphic shellcodes">
+<meta name="keywords" content="blog,developer,personal">
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Transasm - x86 redundancy"/>
+<meta name="twitter:description" content="Exploiting x86 machine code redundancy to create polymorphic shellcodes"/>
+
+<meta property="og:title" content="Transasm - x86 redundancy" />
+<meta property="og:description" content="Exploiting x86 machine code redundancy to create polymorphic shellcodes" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://valkheim.github.io/projects/transasm/" /><meta property="article:section" content="projects" />
+<meta property="article:published_time" content="2022-08-26T00:00:00+02:00" />
+<meta property="article:modified_time" content="2022-08-26T00:00:00+02:00" />
+
+
+
+
+
+
+<link rel="canonical" href="https://valkheim.github.io/projects/transasm/">
+
+
+<link rel="preload" href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as="font" type="font/woff2" crossorigin>
+
+
+  
+  
+  <link rel="stylesheet" href="/css/coder.min.c4d7e93a158eda5a65b3df343745d2092a0a1e2170feeec909b8a89443903c6a.css" integrity="sha256-xNfpOhWO2lpls980N0XSCSoKHiFw/u7JCbiolEOQPGo=" crossorigin="anonymous" media="screen" />
+
+
+
+
+
+
+  
+    
+    
+    <link rel="stylesheet" href="/css/coder-dark.min.78b5fe3864945faf5207fb8fe3ab2320d49c3365def0e88ac1df0ddadc54a03c.css" integrity="sha256-eLX&#43;OGSUX69SB/uP46sjINScM2Xe8OiKwd8N2txUoDw=" crossorigin="anonymous" media="screen" />
+  
+
+
+
+ 
+
+
+
+
+<link rel="icon" type="image/png" href="/images/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/images/favicon-16x16.png" sizes="16x16">
+
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+
+<meta name="generator" content="Hugo 0.120.4">
+
+
+
+
+<link rel="stylesheet" href="https://valkheim.github.iocss/custom.css">
+  </head>
+
+
+
+
+
+
+<body class="preload-transitions colorscheme-dark">
+  
+<div class="float-container">
+    <a id="dark-mode-toggle" class="colorscheme-toggle">
+        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
+    </a>
+</div>
+
+
+  <main class="wrapper">
+    <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">
+      Valkheim’s personal website
+    </a>
+    
+      <input type="checkbox" id="menu-toggle" />
+      <label class="menu-button float-right" for="menu-toggle">
+        <i class="fa fa-bars fa-fw" aria-hidden="true"></i>
+      </label>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/about/">About</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/posts/">Blog</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/projects/">Projects</a>
+            </li>
+          
+        
+        
+      </ul>
+    
+  </section>
+</nav>
+
+
+    <div class="content">
+      
+  <section class="container page">
+  <article>
+    <header>
+      <h1 class="title">
+        <a class="title-link" href="https://valkheim.github.io/projects/transasm/">
+          Transasm - x86 redundancy
+        </a>
+      </h1>
+    </header>
+
+    <p>A Python tool that transpiles x86 instructions into equivalent x86 instructions, exploiting machine code redundancy.</p>
+<h2 id="demo">
+  Demo
+  <a class="heading-link" href="#demo">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span>/transasm$ poetry run transasm
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>&gt; add eax, ebx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>== input:
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>mnemonic:     add eax, ebx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>bytes:        0x01 0xd8
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>prefix:       0x00 0x00 0x00 0x00
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>opcode:       0x01 0x00 0x00 0x00
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>rex:          0x00
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>modrm:        0xd8 (mod: 0b11) (reg: 0b011) (rm: 0b000)
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>modrm offset: 0x01
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>disp:         0x00
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>sib:          0x00 (scale: 0b00) (index: 0b000) (base: 0b000) 
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>== alternative:
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>mnemonic:     add eax, ebx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>bytes:        0x03 0xc3
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>prefix:       0x00 0x00 0x00 0x00
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>opcode:       0x03 0x00 0x00 0x00
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>rex:          0x00
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>modrm:        0xc3 (mod: 0b11) (reg: 0b000) (rm: 0b011)
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span>modrm offset: 0x01
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span>disp:         0x00
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span>sib:          0x00 (scale: 0b00) (index: 0b000) (base: 0b000) 
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span>&gt; 
+</span></span></code></pre></div><div class="notice info">
+  <div class="notice-title">
+    <i class="fa fa-exclamation-circle" aria-hidden="true"></i>Info
+  </div>
+  <div class="notice-content">The demo mode uses keystone and capstone as in my <a href="/projects/asmshell">ASMShell</a> project.</div>
+</div>
+
+<h2 id="tests">
+  Tests
+  <a class="heading-link" href="#tests">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>The following is an extract of the unit tests of transasm.</p>
+<p>It shows some of the transformations the tool is able to provide. Take a look at the <code>test_prime_x86_64_program</code> and <code>test_primes_x86_program</code> tests.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span>/transasm$ poetry run test
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>test_prime_x86_64_program (transasm.tests.func.test_primes_program.TestPrimesProgram) ...
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>&lt;&lt; 31 d2 -&gt; xor edx, edx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>&gt;&gt; 33 d2 -&gt; xor edx, edx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>&lt;&lt; 31 c9 -&gt; xor ecx, ecx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>&gt;&gt; 33 c9 -&gt; xor ecx, ecx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>&lt;&lt; 83 f9 02 -&gt; cmp ecx, 2
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>&gt;&gt; 81 f9 02 00 00 00 -&gt; cmp ecx, 2
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>&lt;&lt; 89 c8 -&gt; mov eax, ecx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>&gt;&gt; 8b c1 -&gt; mov eax, ecx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>&lt;&lt; 31 db -&gt; xor ebx, ebx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>&gt;&gt; 33 db -&gt; xor ebx, ebx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>&lt;&lt; 83 e9 01 -&gt; sub ecx, 1
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>&gt;&gt; 81 e9 01 00 00 00 -&gt; sub ecx, 1
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>&lt;&lt; 83 f9 01 -&gt; cmp ecx, 1
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>&gt;&gt; 81 f9 01 00 00 00 -&gt; cmp ecx, 1
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>&lt;&lt; 01 ca -&gt; add edx, ecx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>&gt;&gt; 03 d1 -&gt; add edx, ecx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>&lt;&lt; 48 89 d6 -&gt; mov rsi, rdx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>&gt;&gt; 48 8b f2 -&gt; mov rsi, rdx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span>&lt;&lt; 48 31 ff -&gt; xor rdi, rdi
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span>&gt;&gt; 48 33 ff -&gt; xor rdi, rdi
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span>ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span>test_primes_x86_program (transasm.tests.func.test_primes_program.TestPrimesProgram) ...
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span>&lt;&lt; 31 d2 -&gt; xor edx, edx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span>&gt;&gt; 33 d2 -&gt; xor edx, edx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span>&lt;&lt; 31 c9 -&gt; xor ecx, ecx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span>&gt;&gt; 33 c9 -&gt; xor ecx, ecx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span><span>&lt;&lt; 83 f9 02 -&gt; cmp ecx, 2
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span><span>&gt;&gt; 81 f9 02 00 00 00 -&gt; cmp ecx, 2
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span><span>&lt;&lt; 89 c8 -&gt; mov eax, ecx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span><span>&gt;&gt; 8b c1 -&gt; mov eax, ecx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span><span>&lt;&lt; 31 db -&gt; xor ebx, ebx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span><span>&gt;&gt; 33 db -&gt; xor ebx, ebx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35</span><span>&lt;&lt; 83 e9 01 -&gt; sub ecx, 1
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36</span><span>&gt;&gt; 81 e9 01 00 00 00 -&gt; sub ecx, 1
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37</span><span>&lt;&lt; 83 f9 01 -&gt; cmp ecx, 1
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38</span><span>&gt;&gt; 81 f9 01 00 00 00 -&gt; cmp ecx, 1
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39</span><span>&lt;&lt; 01 ca -&gt; add edx, ecx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40</span><span>&gt;&gt; 03 d1 -&gt; add edx, ecx
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41</span><span>&lt;&lt; 66 83 c4 08 -&gt; add sp, 8
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42</span><span>&gt;&gt; 66 81 c4 08 00 -&gt; add sp, 8
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43</span><span>ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44</span><span>test_try_transform_acc_with_imm (transasm.tests.unit.test_transform.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45</span><span>test_try_transform_duplicate_opcode_extensions (transasm.tests.unit.test_transform.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46</span><span>test_try_transform_duplicate_x86_opcodes (transasm.tests.unit.test_transform.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47</span><span>test_try_transform_gv_ev_instruction (transasm.tests.unit.test_transform.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48</span><span>test_try_transform_gv_ev_instruction_using_displ (transasm.tests.unit.test_transform.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49</span><span>test_try_transform_imm_operand_size (transasm.tests.unit.test_transform.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50</span><span>test_try_transform_x86_64_using_sib (transasm.tests.unit.test_transform.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51</span><span>test_try_transform_x86_using_sib (transasm.tests.unit.test_transform.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52</span><span>test_try_transform_zero_scale_sib (transasm.tests.unit.test_transform.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">53</span><span>test_try_transform_zeroing (transasm.tests.unit.test_transform.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">54</span><span>test_modrm_type (transasm.tests.unit.test_types.TestTypes) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">55</span><span>test_sib_type (transasm.tests.unit.test_types.TestTypes) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">56</span><span>test_clear_bit (transasm.tests.unit.test_utils.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">57</span><span>test_get_ev_gv_equivalent_opcode_for_reg_ops (transasm.tests.unit.test_utils.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">58</span><span>test_get_x86_64_instruction (transasm.tests.unit.test_utils.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">59</span><span>test_get_x86_instruction (transasm.tests.unit.test_utils.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">60</span><span>test_has_ev_gv_equivalent_opcode_for_reg_ops (transasm.tests.unit.test_utils.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">61</span><span>test_has_register_operands (transasm.tests.unit.test_utils.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">62</span><span>test_has_rex_prefix (transasm.tests.unit.test_utils.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">63</span><span>test_is_bit_set (transasm.tests.unit.test_utils.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">64</span><span>test_set_bit (transasm.tests.unit.test_utils.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">65</span><span>test_swap_base_index_in_sib (transasm.tests.unit.test_utils.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">66</span><span>test_swap_reg_rm_in_modrm (transasm.tests.unit.test_utils.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">67</span><span>test_yield_x86_64_instructions (transasm.tests.unit.test_utils.TestUtils) ... ok
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">68</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">69</span><span>----------------------------------------------------------------------
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">70</span><span>Ran 26 tests in 0.067s
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">71</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">72</span><span>OK
+</span></span></code></pre></div><h2 id="examples">
+  Examples
+  <a class="heading-link" href="#examples">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<h3 id="example-with-register-operands-and-the-modrm-byte">
+  Example with register operands and the ModR/M byte
+  <a class="heading-link" href="#example-with-register-operands-and-the-modrm-byte">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>Some x86 instructions have two opcodes so we can write the following two forms:</p>
+<table>
+<thead>
+<tr>
+<th>instructions</th>
+<th>bytes</th>
+<th>opcode reference</th>
+<th>opcode table</th>
+<th>ModR/M</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add dword ptr [rcx], eax</code></td>
+<td><code>01 01</code></td>
+<td><code>reg/mem32, reg</code></td>
+<td><code>Ev, Gv</code></td>
+<td>0x01 (mod: 0b00) (reg: 0b000) (rm: 0b001)</td>
+</tr>
+<tr>
+<td><code>add eax, dword ptr [rcx]</code></td>
+<td><code>03 01</code></td>
+<td><code>reg, reg/mem32</code></td>
+<td><code>Gv, Ev</code></td>
+<td>0x01 (mod: 0b00) (reg: 0b000) (rm: 0b001)</td>
+</tr>
+</tbody>
+</table>
+<p>When both operands are registers, the opcode  is redundant.
+To obtain the same instruction with a different opcode, we need to rewrite the ModR/M part and especially, invert the reg and the rm parts.</p>
+<table>
+<thead>
+<tr>
+<th>instructions</th>
+<th>bytes</th>
+<th>opcode reference</th>
+<th>opcode table</th>
+<th>ModR/M</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add eax, ebx</code></td>
+<td><code>01 d8</code></td>
+<td><code>reg/mem32, reg</code></td>
+<td><code>Ev, Gv</code></td>
+<td>0xd8 (mod: 0b11) (reg: 0b011) (rm: 0b000)</td>
+</tr>
+<tr>
+<td><code>add eax, ebx</code></td>
+<td><code>03 c3</code></td>
+<td><code>reg, reg/mem32</code></td>
+<td><code>Gv, Ev</code></td>
+<td>0xc3 (mod: 0b11) (reg: 0b000) (rm: 0b011)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-with-register-operands-and-the-sib-byte">
+  Example with register operands and the SIB byte
+  <a class="heading-link" href="#example-with-register-operands-and-the-sib-byte">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>If the scale factor is 1 (sib.scale == 0b00), then it is possible to swap the base and the index register:</p>
+<table>
+<thead>
+<tr>
+<th>instructions</th>
+<th>bytes</th>
+<th>SIB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mov rax, qword ptr [rbx + rcx]</code></td>
+<td><code>48 8b 04 0b</code></td>
+<td>0x0b (scale: 0b00) (index: 0b001, rcx) (base: 0b011, rbx)</td>
+</tr>
+<tr>
+<td><code>mov rax, qword ptr [rcx + rbx]</code></td>
+<td><code>49 8b 04 19</code></td>
+<td>0x19 (scale: 0b00) (index: 0b011, rbx) (base: 0b001, rcx)</td>
+</tr>
+<tr>
+<td><code>mov byte ptr [eax + ebx], 5</code></td>
+<td><code>67 c6 04 18 05</code></td>
+<td>0x18 (scale: 0b00) (index: 0b011, ebx) (base: 0b000, eax)</td>
+</tr>
+<tr>
+<td><code>mov byte ptr [ebx + eax], 5</code></td>
+<td><code>67 c6 04 03 05</code></td>
+<td>0x03 (scale: 0b00) (index: 0b000, eax) (base: 0b011, ebx)</td>
+</tr>
+</tbody>
+</table>
+<p>Note that this manipulation alters the literal representation of the assembly.</p>
+<h3 id="example-with-duplicate-opcode-extensions">
+  Example with duplicate opcode extensions
+  <a class="heading-link" href="#example-with-duplicate-opcode-extensions">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>Some instructions have two opcode extensions like the TEST extension when used with a immediate operand:</p>
+<p>With Group 3 Eb (<code>0xf6</code>):</p>
+<table>
+<thead>
+<tr>
+<th>instructions</th>
+<th>bytes</th>
+<th>ModR/M reg</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test bl, 0x10</code></td>
+<td><code>f6 c3 10</code></td>
+<td><code>000</code></td>
+</tr>
+<tr>
+<td><code>test bl, 0x10</code></td>
+<td><code>f6 cb 10</code></td>
+<td><code>001</code></td>
+</tr>
+</tbody>
+</table>
+<p>With Group 3 Ev (<code>0xf7</code>):</p>
+<table>
+<thead>
+<tr>
+<th>instructions</th>
+<th>bytes</th>
+<th>ModR/M reg</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test ebx, 0xaabbccdd</code></td>
+<td><code>f7 c3 dd cc bb aa</code></td>
+<td><code>000</code></td>
+</tr>
+<tr>
+<td><code>test ebx, 0xaabbccdd</code></td>
+<td><code>f7 cb dd cc bb aa</code></td>
+<td><code>001</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-with-duplicate-opcode-on-x86">
+  Example with duplicate opcode on x86
+  <a class="heading-link" href="#example-with-duplicate-opcode-on-x86">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>Group 1 have have duplicated opcodes for <code>0x80</code> and <code>0x82</code> on x86:</p>
+<table>
+<thead>
+<tr>
+<th>instructions</th>
+<th>bytes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add byte ptr [eax], 0x10</code></td>
+<td><code>80 00 10</code></td>
+</tr>
+<tr>
+<td><code>add byte ptr [eax], 0x10</code></td>
+<td><code>82 00 10</code></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>ModR/M reg</th>
+<th>Instruction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>000</code></td>
+<td>ADD</td>
+</tr>
+<tr>
+<td><code>001</code></td>
+<td>OR</td>
+</tr>
+<tr>
+<td><code>010</code></td>
+<td>ADC</td>
+</tr>
+<tr>
+<td><code>011</code></td>
+<td>SBB</td>
+</tr>
+<tr>
+<td><code>100</code></td>
+<td>AND</td>
+</tr>
+<tr>
+<td><code>101</code></td>
+<td>SUB</td>
+</tr>
+<tr>
+<td><code>110</code></td>
+<td>XOR</td>
+</tr>
+<tr>
+<td><code>111</code></td>
+<td>CMP</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-with-variable-immediate-operand-sizes">
+  Example with variable immediate operand sizes
+  <a class="heading-link" href="#example-with-variable-immediate-operand-sizes">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<table>
+<thead>
+<tr>
+<th>instructions</th>
+<th>bytes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add eax, 0x10</code></td>
+<td><code>83 c0 10</code></td>
+</tr>
+<tr>
+<td><code>add eax, 0x10</code></td>
+<td><code>81 c0 10 00 00 00</code></td>
+</tr>
+<tr>
+<td><code>add rax, 0x10</code></td>
+<td><code>48 83 c0 10</code></td>
+</tr>
+<tr>
+<td><code>add rax, 0x10</code></td>
+<td><code>48 81 c0 10 00 00 00</code></td>
+</tr>
+</tbody>
+</table>
+<p>Under some constraints, we can also use the <code>Eb, Ib</code> versions with opcodes <code>80</code> and <code>82</code>.</p>
+<h3 id="example-with-opcodes-targeting-the-accumulator-register">
+  Example with opcodes targeting the accumulator register
+  <a class="heading-link" href="#example-with-opcodes-targeting-the-accumulator-register">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>There is also a special case with the accumulator register where we can use the <code>x4</code> and <code>x5</code> opcodes:</p>
+<table>
+<thead>
+<tr>
+<th>instructions</th>
+<th>bytes</th>
+<th>ModR/M reg</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add al, 0x10</code></td>
+<td><code>04 10</code></td>
+<td><code>000</code></td>
+</tr>
+<tr>
+<td><code>add al, 0x10</code></td>
+<td><code>80 c0 10</code></td>
+<td><code>000</code></td>
+</tr>
+<tr>
+<td><code>add eax, 0x10</code></td>
+<td><code>05 10 00 00 00</code></td>
+<td><code>000</code></td>
+</tr>
+<tr>
+<td><code>add eax, 0x10</code></td>
+<td><code>81 c0 10 00 00 00</code></td>
+<td><code>000</code></td>
+</tr>
+<tr>
+<td><code>add eax, 0x10</code></td>
+<td><code>83 c0 10</code></td>
+<td><code>000</code></td>
+</tr>
+<tr>
+<td><code>add rax, 0x10</code></td>
+<td><code>48 05 10 00 00 00</code></td>
+<td><code>000</code></td>
+</tr>
+<tr>
+<td><code>add rax, 0x10</code></td>
+<td><code>48 81 c0 10 00 00 00</code></td>
+<td><code>000</code></td>
+</tr>
+<tr>
+<td><code>add rax, 0x10</code></td>
+<td><code>48 83 c0 10</code></td>
+<td><code>000</code></td>
+</tr>
+</tbody>
+</table>
+<p>This works with the following common instructions: <code>and</code>, <code>or</code>, <code>adc</code>, <code>sbb</code>, <code>sub</code>, <code>xor</code>, <code>cmp</code>. See the <code>adc</code> equivalences below:</p>
+<table>
+<thead>
+<tr>
+<th>instructions</th>
+<th>bytes</th>
+<th>ModR/M reg</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>adc al, 0x10</code></td>
+<td><code>14 10</code></td>
+<td><code>000</code></td>
+</tr>
+<tr>
+<td><code>adc al, 0x10</code></td>
+<td><code>80 d0 10</code></td>
+<td><code>010</code></td>
+</tr>
+<tr>
+<td><code>adc eax, 0x10</code></td>
+<td><code>15 10 00 00 00</code></td>
+<td><code>000</code></td>
+</tr>
+<tr>
+<td><code>adc eax, 0x10</code></td>
+<td><code>81 d0 10 00 00 00</code></td>
+<td><code>010</code></td>
+</tr>
+<tr>
+<td><code>adc eax, 0x10</code></td>
+<td><code>83 d0 10</code></td>
+<td><code>010</code></td>
+</tr>
+<tr>
+<td><code>adc rax, 0x10</code></td>
+<td><code>48 15 10 00 00 00</code></td>
+<td><code>000</code></td>
+</tr>
+<tr>
+<td><code>adc rax, 0x10</code></td>
+<td><code>48 81 d0 10 00 00 00</code></td>
+<td><code>010</code></td>
+</tr>
+<tr>
+<td><code>adc rax, 0x10</code></td>
+<td><code>48 83 d0 10</code></td>
+<td><code>010</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-with-zero-displacement">
+  Example with zero displacement
+  <a class="heading-link" href="#example-with-zero-displacement">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>When used with reg/reg operands, displacement size depends on the ModR/M mod part:</p>
+<table>
+<thead>
+<tr>
+<th>instructions</th>
+<th>bytes</th>
+<th>ModR/M</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add dword ptr [eax], eax</code></td>
+<td><code>67 01 00</code></td>
+<td>0x00 (mod: 0b00) (reg: 0b000) (rm: 0b000)</td>
+</tr>
+<tr>
+<td><code>add dword ptr [eax + 00], eax</code></td>
+<td><code>67 01 40 00</code></td>
+<td>0x40 (mod: 0b01) (reg: 0b000) (rm: 0b000)</td>
+</tr>
+<tr>
+<td><code>add dword ptr [eax + 00000000], eax</code></td>
+<td><code>67 01 80 00 00 00 00</code></td>
+<td>0x40 (mod: 0b10) (reg: 0b000) (rm: 0b000)</td>
+</tr>
+<tr>
+<td><code>add qword ptr [rax], rax</code></td>
+<td><code>48 01 00</code></td>
+<td>0x00 (mod: 0b00) (reg: 0b000) (rm: 0b000)</td>
+</tr>
+<tr>
+<td><code>add qword ptr [rax + 00], rax</code></td>
+<td><code>48 01 40 00</code></td>
+<td>0x00 (mod: 0b01) (reg: 0b000) (rm: 0b000)</td>
+</tr>
+<tr>
+<td><code>add qword ptr [rax + 00000000], rax</code></td>
+<td><code>48 01 80 00 00 00 00</code></td>
+<td>0x40 (mod: 0b10) (reg: 0b000) (rm: 0b000)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-with-the-sib-byte">
+  Example with the SIB byte
+  <a class="heading-link" href="#example-with-the-sib-byte">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>The SIB byte has a corner case when it comes to the index and base parts. Index and base registers may be not encoded (e.g. direct addressing encoding). Depending on the SIB presence and the SIB.scale, we can craft 5 different but equivalent encodings for a single instruction:</p>
+<p>In 32-bit mode:</p>
+<table>
+<thead>
+<tr>
+<th>instructions</th>
+<th>bytes</th>
+<th>SIB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mov byte ptr [0xaabbccdd], 0xff</code></td>
+<td><code>c6 05    dd cc bb aa ff</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>mov byte ptr [0xaabbccdd], 0xff</code></td>
+<td><code>c6 04 25 dd cc bb aa ff</code></td>
+<td>0x25 (scale: 0b00) (index: 0b100) (base: 0b101)</td>
+</tr>
+<tr>
+<td><code>mov byte ptr [0xaabbccdd], 0xff</code></td>
+<td><code>c6 04 65 dd cc bb aa ff</code></td>
+<td>0x65 (scale: 0b01) (index: 0b100) (base: 0b101)</td>
+</tr>
+<tr>
+<td><code>mov byte ptr [0xaabbccdd], 0xff</code></td>
+<td><code>c6 04 a5 dd cc bb aa ff</code></td>
+<td>0xa5 (scale: 0b10) (index: 0b100) (base: 0b101)</td>
+</tr>
+<tr>
+<td><code>mov byte ptr [0xaabbccdd], 0xff</code></td>
+<td><code>c6 04 e5 dd cc bb aa ff</code></td>
+<td>0xe5 (scale: 0b11) (index: 0b100) (base: 0b101)</td>
+</tr>
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+<tr>
+<td><code>mov byte ptr [esp - 0x56], 0xff</code></td>
+<td><code>c6 45    aa ff</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>mov byte ptr [esp - 0x56], 0xff</code></td>
+<td><code>c6 44 24 aa ff</code></td>
+<td>0x24 (scale: 0b00) (index: 0b100) (base: 0b100)</td>
+</tr>
+<tr>
+<td><code>mov byte ptr [esp - 0x56], 0xff</code></td>
+<td><code>c6 44 64 aa ff</code></td>
+<td>0x64 (scale: 0b01) (index: 0b100) (base: 0b100)</td>
+</tr>
+<tr>
+<td><code>mov byte ptr [esp - 0x56], 0xff</code></td>
+<td><code>c6 44 a4 aa ff</code></td>
+<td>0xa4 (scale: 0b10) (index: 0b100) (base: 0b100)</td>
+</tr>
+<tr>
+<td><code>mov byte ptr [esp - 0x56], 0xff</code></td>
+<td><code>c6 44 e4 aa ff</code></td>
+<td>0xe4 (scale: 0b11) (index: 0b100) (base: 0b100)</td>
+</tr>
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+<tr>
+<td><code>mov byte ptr [ebp + 0x56], 0xff</code></td>
+<td><code>c6 45    56 ff</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>mov byte ptr [ebp + 0x56], 0xff</code></td>
+<td><code>c6 44 25 56 ff</code></td>
+<td>0x25 (scale: 0b00) (index: 0b100) (base: 0b101)</td>
+</tr>
+<tr>
+<td><code>mov byte ptr [ebp + 0x56], 0xff</code></td>
+<td><code>c6 44 65 56 ff</code></td>
+<td>0x65 (scale: 0b01) (index: 0b100) (base: 0b101)</td>
+</tr>
+<tr>
+<td><code>mov byte ptr [ebp + 0x56], 0xff</code></td>
+<td><code>c6 44 a5 56 ff</code></td>
+<td>0xa5 (scale: 0b10) (index: 0b100) (base: 0b101)</td>
+</tr>
+<tr>
+<td><code>mov byte ptr [ebp + 0x56], 0xff</code></td>
+<td><code>c6 44 e5 56 ff</code></td>
+<td>0xe5 (scale: 0b11) (index: 0b100) (base: 0b101)</td>
+</tr>
+</tbody>
+</table>
+<p>In 64-bit mode:</p>
+<table>
+<thead>
+<tr>
+<th>instructions</th>
+<th>bytes</th>
+<th>SIB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mov byte ptr [rsp - 0x56], 0xff</code></td>
+<td><code>c6 45    aa ff</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>mov byte ptr [rsp - 0x56], 0xff</code></td>
+<td><code>c6 44 24 aa ff</code></td>
+<td>0x24 (scale: 0b00) (index: 0b100) (base: 0b100)</td>
+</tr>
+<tr>
+<td>&hellip;</td>
+<td>&hellip;</td>
+<td>&hellip;</td>
+</tr>
+<tr>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+<td>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</td>
+</tr>
+<tr>
+<td><code>mov byte ptr [esp - 0x56], 0xff</code></td>
+<td><code>67 c6 45    aa ff</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>mov byte ptr [esp - 0x56], 0xff</code></td>
+<td><code>67 c6 44 24 aa ff</code></td>
+<td>0x24 (scale: 0b00) (index: 0b100) (base: 0b100)</td>
+</tr>
+<tr>
+<td>&hellip;</td>
+<td>&hellip;</td>
+<td>&hellip;</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-with-legacy-prefixes">
+  Example with legacy prefixes
+  <a class="heading-link" href="#example-with-legacy-prefixes">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>In 32-bit mode, we can omit some legacy prefixes:</p>
+<table>
+<thead>
+<tr>
+<th>instructions</th>
+<th>bytes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add qword ptr [eax], eax</code></td>
+<td><code>01 00</code></td>
+</tr>
+<tr>
+<td><code>add qword ptr [eax], eax</code></td>
+<td><code>67 01 00</code></td>
+</tr>
+</tbody>
+</table>
+<p>Some instructions might accept one or more prefixes:</p>
+<table>
+<thead>
+<tr>
+<th>instructions</th>
+<th>bytes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nop</code></td>
+<td><code>90</code></td>
+</tr>
+<tr>
+<td><code>nop</code></td>
+<td><code>66 90</code></td>
+</tr>
+<tr>
+<td><code>nop</code></td>
+<td><code>66 67 90</code></td>
+</tr>
+<tr>
+<td><code>nop</code></td>
+<td><code>66 66 67 90</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="logic-transformation">
+  Logic transformation
+  <a class="heading-link" href="#logic-transformation">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>Zeroing registers:</p>
+<table>
+<thead>
+<tr>
+<th>instructions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mov eax, 0x0</code></td>
+</tr>
+<tr>
+<td><code>xor eax, eax</code></td>
+</tr>
+<tr>
+<td><code>sub eax, eax</code></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>instructions</th>
+<th>code</th>
+<th>ModR/M</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>xor bx, bx</code></td>
+<td><code>66 31 db</code></td>
+<td>0xdb (mod: 0b11) (reg: 0b011) (rm: 0b011)</td>
+</tr>
+<tr>
+<td><code>xor ebx, ebx</code></td>
+<td><code>31 db</code></td>
+<td>0xdb (mod: 0b11) (reg: 0b011) (rm: 0b011)</td>
+</tr>
+<tr>
+<td><code>xor rbx, rbx</code></td>
+<td><code>48 31 db</code></td>
+<td>0xdb (mod: 0b11) (reg: 0b011) (rm: 0b011)</td>
+</tr>
+<tr>
+<td><code>sub bx, bx</code></td>
+<td><code>66 29 db</code></td>
+<td>0xdb (mod: 0b11) (reg: 0b011) (rm: 0b011)</td>
+</tr>
+<tr>
+<td><code>sub ebx, ebx</code></td>
+<td><code>29 db</code></td>
+<td>0xdb (mod: 0b11) (reg: 0b011) (rm: 0b011)</td>
+</tr>
+<tr>
+<td><code>sub rbx, rbx</code></td>
+<td><code>48 29 db</code></td>
+<td>0xdb (mod: 0b11) (reg: 0b011) (rm: 0b011)</td>
+</tr>
+<tr>
+<td><code>mov bx, 0</code></td>
+<td><code>66 bb 00 00</code></td>
+<td>0x00 (mod: 0b00) (reg: 0b000) (rm: 0b000)</td>
+</tr>
+<tr>
+<td><code>mov eax, 0</code></td>
+<td><code>b8 00 00 00 00</code></td>
+<td>0x00 (mod: 0b00) (reg: 0b000) (rm: 0b000)</td>
+</tr>
+<tr>
+<td><code>mov ebx, 0</code></td>
+<td><code>bb 00 00 00 00</code></td>
+<td>0x00 (mod: 0b00) (reg: 0b000) (rm: 0b000)</td>
+</tr>
+<tr>
+<td><code>mov rax, 0</code></td>
+<td><code>48 c7 c0 00 00 00 00</code></td>
+<td>0xc0 (mod: 0b11) (reg: 0b000) (rm: 0b000)</td>
+</tr>
+<tr>
+<td><code>mov rbx, 0</code></td>
+<td><code>48 c7 c3 00 00 00 00</code></td>
+<td>0xc3 (mod: 0b11) (reg: 0b000) (rm: 0b011)</td>
+</tr>
+</tbody>
+</table>
+<p>To switch between the <code>xor</code> and the <code>sub</code>, we have to switch opcodes.
+The switch between the <code>xor</code> and the <code>mov</code> is not supported yet.</p>
+<h3 id="going-further">
+  Going further
+  <a class="heading-link" href="#going-further">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>You can use these techniques to build more cool stuff:</p>
+<ul>
+<li>Obfuscation / diversification pre/post compilation (think cmake module, lief dissecting, llvm pass, etc)</li>
+<li>Steganography (take a look at Hydan)</li>
+<li>On the fly payload/shellcode polymorphism (within your favourite engine)</li>
+</ul>
+<h2 id="download">
+  Download
+  <a class="heading-link" href="#download">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>Get a copy at <a href="https://github.com/valkheim/transasm">github.com/valkheim/transasm</a>.</p>
+
+  </article>
+</section>
+
+  
+
+    </div>
+
+    <footer class="footer">
+  <section class="container">
+    
+  </section>
+</footer>
+
+  </main>
+
+  
+
+  
+  
+  <script src="/js/coder.min.236049395dc3682fb2719640872958e12f1f24067bb09c327b233e6290c7edac.js" integrity="sha256-I2BJOV3DaC&#43;ycZZAhylY4S8fJAZ7sJwyeyM&#43;YpDH7aw="></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+
+</html>

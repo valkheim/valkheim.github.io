@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>x86 on Valkheim’s personal website</title>
+    <link>https://valkheim.github.io/tags/x86/</link>
+    <description>Recent content in x86 on Valkheim’s personal website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 26 Oct 2022 00:00:00 +0200</lastBuildDate>
+    <atom:link href="https://valkheim.github.io/tags/x86/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>The fxsave and fxrstor instructions</title>
+      <link>https://valkheim.github.io/posts/fxsave/</link>
+      <pubDate>Wed, 26 Oct 2022 00:00:00 +0200</pubDate>
+      <guid>https://valkheim.github.io/posts/fxsave/</guid>
+      <description>The IA-32 instruction set has some darn cool instructions.
+Instructions such as the fxsave/fxrstor combo are using a stack to operate:
+Info The fxsave instruction saves the current state of the x87 FPU, MMX technology, XMM, and MXCSR registers to a 512-byte memory location specified in the destination operand. Info The fxrstor instruction reloads the x87 FPU, MMX technology, XMM, and MXCSR registers from the 512-byte memory image specified in the source operand.</description>
+    </item>
+  </channel>
+</rss>
