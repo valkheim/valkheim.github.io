@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on Valkheim’s personal website</title>
+    <link>http://www.example.com/tags/</link>
+    <description>Recent content in Tags on Valkheim’s personal website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 31 Oct 2022 00:00:00 +0200</lastBuildDate><atom:link href="http://www.example.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CTF</title>
+      <link>http://www.example.com/tags/ctf/</link>
+      <pubDate>Mon, 31 Oct 2022 00:00:00 +0200</pubDate>
+      
+      <guid>http://www.example.com/tags/ctf/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ECW</title>
+      <link>http://www.example.com/tags/ecw/</link>
+      <pubDate>Mon, 31 Oct 2022 00:00:00 +0200</pubDate>
+      
+      <guid>http://www.example.com/tags/ecw/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kernel</title>
+      <link>http://www.example.com/tags/kernel/</link>
+      <pubDate>Mon, 31 Oct 2022 00:00:00 +0200</pubDate>
+      
+      <guid>http://www.example.com/tags/kernel/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Minifilter</title>
+      <link>http://www.example.com/tags/minifilter/</link>
+      <pubDate>Mon, 31 Oct 2022 00:00:00 +0200</pubDate>
+      
+      <guid>http://www.example.com/tags/minifilter/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>UEFI</title>
+      <link>http://www.example.com/tags/uefi/</link>
+      <pubDate>Mon, 31 Oct 2022 00:00:00 +0200</pubDate>
+      
+      <guid>http://www.example.com/tags/uefi/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Windows</title>
+      <link>http://www.example.com/tags/windows/</link>
+      <pubDate>Mon, 31 Oct 2022 00:00:00 +0200</pubDate>
+      
+      <guid>http://www.example.com/tags/windows/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>asm</title>
+      <link>http://www.example.com/tags/asm/</link>
+      <pubDate>Wed, 26 Oct 2022 00:00:00 +0200</pubDate>
+      
+      <guid>http://www.example.com/tags/asm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>x86</title>
+      <link>http://www.example.com/tags/x86/</link>
+      <pubDate>Wed, 26 Oct 2022 00:00:00 +0200</pubDate>
+      
+      <guid>http://www.example.com/tags/x86/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>AVR</title>
+      <link>http://www.example.com/tags/avr/</link>
+      <pubDate>Mon, 25 Oct 2021 00:00:00 +0200</pubDate>
+      
+      <guid>http://www.example.com/tags/avr/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

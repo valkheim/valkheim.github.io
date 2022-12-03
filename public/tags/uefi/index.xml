@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>UEFI on Valkheim’s personal website</title>
+    <link>http://www.example.com/tags/uefi/</link>
+    <description>Recent content in UEFI on Valkheim’s personal website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 31 Oct 2022 00:00:00 +0200</lastBuildDate><atom:link href="http://www.example.com/tags/uefi/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ECW 2022 - UEFI</title>
+      <link>http://www.example.com/posts/ecw-2022-uefi/</link>
+      <pubDate>Mon, 31 Oct 2022 00:00:00 +0200</pubDate>
+      
+      <guid>http://www.example.com/posts/ecw-2022-uefi/</guid>
+      <description>UEFI is a reverse-engineering challenge I designed for the 2022 edition of the European Cyber Week. Here is the source code for this challenge.
+You&amp;rsquo;re given a disk.img file and the following qemu command line:
+1qemu-system-x86_64 -cpu qemu64 \ 2 -drive if=pflash,format=raw,unit=0,file=OVMF_CODE.fd,readonly=on \ 3 -drive if=pflash,format=raw,unit=1,file=OVMF_VARS.fd \ 4 -drive format=raw,file=disk.img,if=virtio \ 5 -net none \ 6 -nographic \ 7 -serial mon:stdio \ 8 -monitor telnet::45454,server,nowait \ This launches an EFI app asking for a password:</description>
+    </item>
+    
+  </channel>
+</rss>

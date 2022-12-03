@@ -1,0 +1,9 @@
+
+/* shitty hacks to make that shitty website generator work properly */
+code {
+  width: 0;
+}
+
+.highlight pre code {
+  background-color: inherit !important;
+}
