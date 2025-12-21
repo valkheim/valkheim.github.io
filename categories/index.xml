@@ -6,21 +6,24 @@
     <description>Recent content in Categories on Valkheim’s personal website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 23 Nov 2023 00:00:00 +0200</lastBuildDate>
-    <atom:link href="https://valkheim.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 23 Nov 2023 00:00:00 +0200</lastBuildDate><atom:link href="https://valkheim.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>CTF</title>
       <link>https://valkheim.github.io/categories/ctf/</link>
       <pubDate>Thu, 23 Nov 2023 00:00:00 +0200</pubDate>
+      
       <guid>https://valkheim.github.io/categories/ctf/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>x86</title>
       <link>https://valkheim.github.io/categories/x86/</link>
       <pubDate>Wed, 26 Oct 2022 00:00:00 +0200</pubDate>
+      
       <guid>https://valkheim.github.io/categories/x86/</guid>
       <description></description>
     </item>
+    
   </channel>
 </rss>

@@ -6,91 +6,114 @@
     <description>Recent content in Tags on Valkheim’s personal website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 23 Nov 2023 00:00:00 +0200</lastBuildDate>
-    <atom:link href="https://valkheim.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 23 Nov 2023 00:00:00 +0200</lastBuildDate><atom:link href="https://valkheim.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>CTF</title>
       <link>https://valkheim.github.io/tags/ctf/</link>
       <pubDate>Thu, 23 Nov 2023 00:00:00 +0200</pubDate>
+      
       <guid>https://valkheim.github.io/tags/ctf/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>ECW</title>
       <link>https://valkheim.github.io/tags/ecw/</link>
       <pubDate>Thu, 23 Nov 2023 00:00:00 +0200</pubDate>
+      
       <guid>https://valkheim.github.io/tags/ecw/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>ECW 2022</title>
       <link>https://valkheim.github.io/tags/ecw-2022/</link>
       <pubDate>Wed, 16 Nov 2022 12:00:01 +0100</pubDate>
+      
       <guid>https://valkheim.github.io/tags/ecw-2022/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>Reverse Engineering</title>
       <link>https://valkheim.github.io/tags/reverse-engineering/</link>
       <pubDate>Wed, 16 Nov 2022 12:00:01 +0100</pubDate>
+      
       <guid>https://valkheim.github.io/tags/reverse-engineering/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>Writeup</title>
       <link>https://valkheim.github.io/tags/writeup/</link>
       <pubDate>Wed, 16 Nov 2022 12:00:01 +0100</pubDate>
+      
       <guid>https://valkheim.github.io/tags/writeup/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>kernel</title>
       <link>https://valkheim.github.io/tags/kernel/</link>
       <pubDate>Mon, 31 Oct 2022 00:00:00 +0200</pubDate>
+      
       <guid>https://valkheim.github.io/tags/kernel/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>Minifilter</title>
       <link>https://valkheim.github.io/tags/minifilter/</link>
       <pubDate>Mon, 31 Oct 2022 00:00:00 +0200</pubDate>
+      
       <guid>https://valkheim.github.io/tags/minifilter/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>UEFI</title>
       <link>https://valkheim.github.io/tags/uefi/</link>
       <pubDate>Mon, 31 Oct 2022 00:00:00 +0200</pubDate>
+      
       <guid>https://valkheim.github.io/tags/uefi/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>Windows</title>
       <link>https://valkheim.github.io/tags/windows/</link>
       <pubDate>Mon, 31 Oct 2022 00:00:00 +0200</pubDate>
+      
       <guid>https://valkheim.github.io/tags/windows/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>asm</title>
       <link>https://valkheim.github.io/tags/asm/</link>
       <pubDate>Wed, 26 Oct 2022 00:00:00 +0200</pubDate>
+      
       <guid>https://valkheim.github.io/tags/asm/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>x86</title>
       <link>https://valkheim.github.io/tags/x86/</link>
       <pubDate>Wed, 26 Oct 2022 00:00:00 +0200</pubDate>
+      
       <guid>https://valkheim.github.io/tags/x86/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>AVR</title>
       <link>https://valkheim.github.io/tags/avr/</link>
       <pubDate>Mon, 25 Oct 2021 00:00:00 +0200</pubDate>
+      
       <guid>https://valkheim.github.io/tags/avr/</guid>
       <description></description>
     </item>
+    
   </channel>
 </rss>

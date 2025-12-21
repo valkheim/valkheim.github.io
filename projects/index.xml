@@ -6,39 +6,45 @@
     <description>Recent content in Projects on Valkheim’s personal website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 01 Jan 2023 00:00:00 +0200</lastBuildDate>
-    <atom:link href="https://valkheim.github.io/projects/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 01 Jan 2023 00:00:00 +0200</lastBuildDate><atom:link href="https://valkheim.github.io/projects/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>PE static analysis engine</title>
       <link>https://valkheim.github.io/projects/pe_scanner/</link>
       <pubDate>Sun, 01 Jan 2023 00:00:00 +0200</pubDate>
+      
       <guid>https://valkheim.github.io/projects/pe_scanner/</guid>
       <description>I&amp;rsquo;ve been recently working on PE static analysis engine.
 Feature extraction Link to heading I built a PE feature extraction module. Mostly based on LIEF &amp;amp;&amp;amp; pefile, it is extracting a lot (&amp;gt;150) of features like:
 checksums amount of exports entropy of sections packing detection antidebug features &amp;hellip; plus some more interesting ones.
 Classification Link to heading I used the feature extraction module to set up a classification model to discriminate between benignware and malware.</description>
     </item>
+    
     <item>
       <title>Transasm - x86 redundancy</title>
       <link>https://valkheim.github.io/projects/transasm/</link>
       <pubDate>Fri, 26 Aug 2022 00:00:00 +0200</pubDate>
+      
       <guid>https://valkheim.github.io/projects/transasm/</guid>
       <description>A Python tool that transpiles x86 instructions into equivalent x86 instructions, exploiting machine code redundancy.
 Demo Link to heading 1/transasm$ poetry run transasm 2&amp;gt; add eax, ebx 3== input: 4mnemonic: add eax, ebx 5bytes: 0x01 0xd8 6prefix: 0x00 0x00 0x00 0x00 7opcode: 0x01 0x00 0x00 0x00 8rex: 0x00 9modrm: 0xd8 (mod: 0b11) (reg: 0b011) (rm: 0b000) 10modrm offset: 0x01 11disp: 0x00 12sib: 0x00 (scale: 0b00) (index: 0b000) (base: 0b000) 13 14== alternative: 15mnemonic: add eax, ebx 16bytes: 0x03 0xc3 17prefix: 0x00 0x00 0x00 0x00 18opcode: 0x03 0x00 0x00 0x00 19rex: 0x00 20modrm: 0xc3 (mod: 0b11) (reg: 0b000) (rm: 0b011) 21modrm offset: 0x01 22disp: 0x00 23sib: 0x00 (scale: 0b00) (index: 0b000) (base: 0b000) 24 25&amp;gt; Info The demo mode uses keystone and capstone as in my ASMShell project.</description>
     </item>
+    
     <item>
       <title>ASMShell - x86_64 REPL</title>
       <link>https://valkheim.github.io/projects/asmshell/</link>
       <pubDate>Sun, 10 Jul 2022 00:00:00 +0200</pubDate>
+      
       <guid>https://valkheim.github.io/projects/asmshell/</guid>
       <description>A Python x86_64 REPL based on keystone + unicorn + capstone.
 Usage Link to heading You can launch the asmshell in 32 or 64-bit mode. From there, you can directly type assembly in the prompt or access some internal commands as listed below (or under the .help command):
 Note ASMShell is a python packaged managed with poetry. Write code, observe side effects Link to heading When you launch asmshell, you can type assembly and get a quick glance at what you&amp;rsquo;re doing.</description>
     </item>
+    
     <item>
       <title>Tagada - IDA plugin for Windows RE tasks</title>
       <link>https://valkheim.github.io/projects/tagada/</link>
       <pubDate>Fri, 29 Oct 2021 00:00:00 +0200</pubDate>
+      
       <guid>https://valkheim.github.io/projects/tagada/</guid>
       <description>An IDA python plugin to help with common Windows oriented reversing tasks.
 Usage Link to heading Tagada provides (un)installation scripts within the /scripts/ folder.
@@ -46,5 +52,6 @@ The wanted hot key is Alt+f8.
 Features Link to heading The plugin handles the following:
 Memory pool tags IOCTLs BugCheck NTStatus Highlight unsafe functions FailFast Memory pool tags Link to heading This module will create enums for each configured entry. At this point, only ntoskrnl.exe is configured.</description>
     </item>
+    
   </channel>
 </rss>

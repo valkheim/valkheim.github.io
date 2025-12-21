@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://valkheim.github.io/posts/kcp/</loc>
+    <lastmod>2025-07-25T00:00:00+02:00</lastmod>
+  </url><url>
+    <loc>https://valkheim.github.io/posts/</loc>
+    <lastmod>2025-07-25T00:00:00+02:00</lastmod>
+  </url><url>
+    <loc>https://valkheim.github.io/</loc>
+    <lastmod>2025-07-25T00:00:00+02:00</lastmod>
+  </url><url>
     <loc>https://valkheim.github.io/categories/</loc>
     <lastmod>2023-11-23T00:00:00+02:00</lastmod>
   </url><url>
@@ -20,17 +29,14 @@
     <loc>https://valkheim.github.io/posts/ecw-2023-tycoon/</loc>
     <lastmod>2023-11-23T00:00:00+02:00</lastmod>
   </url><url>
-    <loc>https://valkheim.github.io/posts/</loc>
-    <lastmod>2023-11-23T00:00:00+02:00</lastmod>
-  </url><url>
     <loc>https://valkheim.github.io/series/</loc>
     <lastmod>2023-11-23T00:00:00+02:00</lastmod>
   </url><url>
     <loc>https://valkheim.github.io/tags/</loc>
     <lastmod>2023-11-23T00:00:00+02:00</lastmod>
   </url><url>
-    <loc>https://valkheim.github.io/</loc>
-    <lastmod>2023-11-23T00:00:00+02:00</lastmod>
+    <loc>https://valkheim.github.io/posts/binary_diffing/</loc>
+    <lastmod>2023-03-15T00:00:00+02:00</lastmod>
   </url><url>
     <loc>https://valkheim.github.io/projects/pe_scanner/</loc>
     <lastmod>2023-01-01T00:00:00+02:00</lastmod>

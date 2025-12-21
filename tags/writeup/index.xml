@@ -6,16 +6,17 @@
     <description>Recent content in Writeup on Valkheim’s personal website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 16 Nov 2022 12:00:01 +0100</lastBuildDate>
-    <atom:link href="https://valkheim.github.io/tags/writeup/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 16 Nov 2022 12:00:01 +0100</lastBuildDate><atom:link href="https://valkheim.github.io/tags/writeup/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>ECW 2022 - WriteUp 20 years of uptime</title>
       <link>https://valkheim.github.io/posts/ecw-2022-20-years-of-uptime/</link>
       <pubDate>Wed, 16 Nov 2022 12:00:01 +0100</pubDate>
+      
       <guid>https://valkheim.github.io/posts/ecw-2022-20-years-of-uptime/</guid>
       <description>20 years of uptime is a reverse-engineering challenge I designed for the finals of the European Cyber Week 2022. Here is the source code for this challenge.
 We begin by extracting and inspecting the provided archive file:
 1$ file os.bin 2os.bin: DOS/MBR boot sector; partition 1 : ID=0xb2, active 0xb0, start-CHS 3(0x194,19,46), end-CHS (0x3e0,51,38), startsector 1456018950, 2168693133 4sectors; partition 3 : ID=0x22, active 0xc1, start-CHS (0x330,141,6), end-CHS 5(0x362,150,34), startsector 3705749179, 1985222079 sectors A DOS/MBR boot sector?</description>
     </item>
+    
   </channel>
 </rss>

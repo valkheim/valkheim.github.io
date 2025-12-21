@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>
+  On binary diffing · Valkheim’s personal website
+</title>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+
+
+
+
+<meta name="author" content="valkheim">
+<meta name="description" content="Introduction Link to heading Finding a tiny change in a large amount of data is a painfull task when one have to do it manually.
+Finding a tiny change in a Iarge amount of data is a painfull task when one have to do it manually.
+Well, it looks like it can still be painfull with a rather small amount of data&hellip;
+Comparison is hard to do.
+Diffing is the automation of this comparison task.">
+<meta name="keywords" content="blog,developer,personal">
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="On binary diffing"/>
+<meta name="twitter:description" content="Introduction Link to heading Finding a tiny change in a large amount of data is a painfull task when one have to do it manually.
+Finding a tiny change in a Iarge amount of data is a painfull task when one have to do it manually.
+Well, it looks like it can still be painfull with a rather small amount of data&hellip;
+Comparison is hard to do.
+Diffing is the automation of this comparison task."/>
+
+<meta property="og:title" content="On binary diffing" />
+<meta property="og:description" content="Introduction Link to heading Finding a tiny change in a large amount of data is a painfull task when one have to do it manually.
+Finding a tiny change in a Iarge amount of data is a painfull task when one have to do it manually.
+Well, it looks like it can still be painfull with a rather small amount of data&hellip;
+Comparison is hard to do.
+Diffing is the automation of this comparison task." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://valkheim.github.io/posts/binary_diffing/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-03-15T00:00:00+02:00" />
+<meta property="article:modified_time" content="2023-03-15T00:00:00+02:00" />
+
+
+
+
+
+<link rel="canonical" href="https://valkheim.github.io/posts/binary_diffing/">
+
+
+<link rel="preload" href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as="font" type="font/woff2" crossorigin>
+
+
+  
+  
+  <link rel="stylesheet" href="/css/coder.min.c4d7e93a158eda5a65b3df343745d2092a0a1e2170feeec909b8a89443903c6a.css" integrity="sha256-xNfpOhWO2lpls980N0XSCSoKHiFw/u7JCbiolEOQPGo=" crossorigin="anonymous" media="screen" />
+
+
+
+
+
+
+  
+    
+    
+    <link rel="stylesheet" href="/css/coder-dark.min.78b5fe3864945faf5207fb8fe3ab2320d49c3365def0e88ac1df0ddadc54a03c.css" integrity="sha256-eLX&#43;OGSUX69SB/uP46sjINScM2Xe8OiKwd8N2txUoDw=" crossorigin="anonymous" media="screen" />
+  
+
+
+
+ 
+
+
+
+
+<link rel="icon" type="image/png" href="/images/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/images/favicon-16x16.png" sizes="16x16">
+
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+
+<meta name="generator" content="Hugo 0.104.3" />
+
+
+
+
+<link rel="stylesheet" href="https://valkheim.github.iocss/custom.css">
+  </head>
+
+
+
+
+
+
+<body class="preload-transitions colorscheme-dark">
+  
+<div class="float-container">
+    <a id="dark-mode-toggle" class="colorscheme-toggle">
+        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
+    </a>
+</div>
+
+
+  <main class="wrapper">
+    <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">
+      Valkheim’s personal website
+    </a>
+    
+      <input type="checkbox" id="menu-toggle" />
+      <label class="menu-button float-right" for="menu-toggle">
+        <i class="fa fa-bars fa-fw" aria-hidden="true"></i>
+      </label>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/about/">About</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/posts/">Blog</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/projects/">Projects</a>
+            </li>
+          
+        
+        
+      </ul>
+    
+  </section>
+</nav>
+
+
+    <div class="content">
+      
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">
+            <a class="title-link" href="https://valkheim.github.io/posts/binary_diffing/">
+              On binary diffing
+            </a>
+          </h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <time datetime="2023-03-15T00:00:00&#43;02:00">
+                March 15, 2023
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fa fa-clock-o" aria-hidden="true"></i>
+              5-minute read
+            </span>
+          </div>
+          
+          
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <h1 id="introduction">
+  Introduction
+  <a class="heading-link" href="#introduction">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h1>
+<p>Finding a tiny change in a large amount of data is a painfull task when one
+have to do it manually.</p>
+<p>Finding a tiny change in a Iarge amount of data is a painfull task when one
+have to do it manually.</p>
+<p>Well, it looks like it can still be painfull with a rather small amount of
+data&hellip;</p>
+<p>Comparison is hard to do.</p>
+<p>Diffing is the automation of this comparison task. It has various uses such as
+building version control systems and providing source code patches.</p>
+<h2 id="diffing-techniques">
+  Diffing techniques
+  <a class="heading-link" href="#diffing-techniques">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>There exists various diffing techniques, each one addressing a comparison
+problem, each one with its strengths and drawbacks.</p>
+<p>Using the same method to compare text and images internals won&rsquo;t make sense:
+you won&rsquo;t diff PNGs using Git nor diff text using Resemble.js or any other CSS
+visual regression testing tools.</p>
+<p>Before comparing anything, <strong>You have to deeply understand the structure of
+your sources to be able to compare them properly.</strong></p>
+<p>When it comes to executables binary files diffing, the accuracy of your method
+depends on the granularity of the properties you can extract from your
+binaries. A binary can be expressed, with coarse granularity, as a simple
+checksum. To understand how binaries differ, you can express them with finer
+granularity. To do so, you will extract multiple properties depending on your
+targeted accuracy and goals:</p>
+<ul>
+<li>file format (PE, ELF, Mach0)</li>
+<li>targeted platform</li>
+<li>instructions set (x86, x86-64)</li>
+<li>sections</li>
+<li>functions</li>
+<li>calling conventions</li>
+<li>basic blocks</li>
+<li>instructions</li>
+<li>metadata (from timestamp to compiler features)</li>
+</ul>
+<p>The overall results and accuracy you can expect from your diffing method depend
+on the amount of knowledge you have in your sources.</p>
+<p>When those properties are acquired, you can start reasoning about them and
+construct models you&rsquo;ll be able to compare. For example:</p>
+<ul>
+<li>compare functions symbols (as in BAM)</li>
+<li>compare function graphs (as in diaphora - KoKa tarjan)</li>
+<li>compare immediate values / code vectors (as in YaDiff)</li>
+</ul>
+<p>In the context of reverse engineering, diffing and especially binary diffing
+can be very handy and often a huge time saver. You can use diffing techniques
+in various situations like patch analysis or symbols propagation.</p>
+<p>We&rsquo;ll explore some of them.</p>
+<h2 id="patch-analysis">
+  Patch analysis
+  <a class="heading-link" href="#patch-analysis">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>In order to perform patch analyses, you should perform diffing techniques on a
+binary and its patched version. If you&rsquo;re dealing with a security patch, chances
+are you&rsquo;re going to reveal the vulnerability fixed in that patch. You&rsquo;ll be able
+to locate and (hopefully) understand the vulnerability there. This would help
+you writing your n-day exploit.</p>
+<p>Patch analysis is a key process in patch diffing. It requires a good
+understanding of patch format(s). Also, patch application modalities are very
+important as a patch can come in various shapes. A patch can be a simple
+reinstallation of all the components of a software, or a very specific update of
+a single component.</p>
+<p>More than the patch itself, the analyst should focus on the patch application
+process. This could mean having interest in the patch installer itself. The
+Windows Installer is a good candidate for exploring all these aspects.</p>
+<h2 id="symbols-propagation">
+  Symbols propagation
+  <a class="heading-link" href="#symbols-propagation">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>During reverse engineering, you might want to help yourself by documenting your
+binary using a dedicated software like IDA pro or Ghidra, hence, applying
+labels on functions, basic block, renaming variables and more.</p>
+<p>Diffing can play a role when it comes to work on a new version of the binary
+you&rsquo;re studying. Many of the code might not change, maybe some basic blocks,
+maybe some rebasing. Binary diffing can help you propagate your documentation
+from one version to another.</p>
+<p>In order to propagate documentation of a binary to a new version of that
+binary. You have to recognize every object you want to track. This object can
+be:</p>
+<ul>
+<li>a section</li>
+<li>a function</li>
+<li>a basic block</li>
+<li>an instruction</li>
+<li>some data</li>
+<li>an entry in an import table</li>
+</ul>
+<p>When done, you should be able to remap your database of objects on an older or
+newer version of the binary you&rsquo;re studying.</p>
+<p>Your database should be agnostic of the platform, enabling you to propagate
+symbols across various forms of binaries: let&rsquo;s say you own a leaked collection
+of symbols for the desktop version of the app but you want to work on the
+mobile version of that same app.</p>
+<h2 id="resist-to-diffing-techniques">
+  Resist to diffing techniques
+  <a class="heading-link" href="#resist-to-diffing-techniques">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>Oh you don&rsquo;t want your code to be easily understood and tracked by the binary
+diffing capabilities? Then you should attack what makes binary diffing possible:
+the code structure and properties such as functions calls.</p>
+<p>CFG flattening is an example technique that helps messing with common diffing
+techniques: the code belonging to a particular function may not be arranged
+contiguously in the binary.
+Bits and pieces of the function might be scattered throughout the code section,
+and chunks of code may even be shared between functions. They are known as
+overlapping code blocks. This happens a lot in optimized code such as firware
+and embeeded systems codebases.</p>
+<h2 id="attribution">
+  Attribution
+  <a class="heading-link" href="#attribution">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>Comparisons can help build families and in the end, can help with attributions.</p>
+<p>Binary diffing can play a major role while doing binary attribution. It can
+help detect code redundancy and variants using some correlation factors.
+Pattern matching can help to find some very unique attributes (e.g l33t
+signatures).</p>
+<h2 id="see-also">
+  See also
+  <a class="heading-link" href="#see-also">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>hex differ, bindiff, diaphora, bmat, eEye, DarunGrim, yadiff, patch tuesday</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+    </div>
+
+    <footer class="footer">
+  <section class="container">
+    
+  </section>
+</footer>
+
+  </main>
+
+  
+
+  
+  
+  <script src="/js/coder.min.236049395dc3682fb2719640872958e12f1f24067bb09c327b233e6290c7edac.js" integrity="sha256-I2BJOV3DaC&#43;ycZZAhylY4S8fJAZ7sJwyeyM&#43;YpDH7aw="></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+
+</html>
