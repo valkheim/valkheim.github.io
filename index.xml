@@ -19,6 +19,16 @@ KCP Wirehair type reliable ARQ Fountain code (FEC) best for real-time, low laten
     </item>
     
     <item>
+      <title>Binance FIX API logon signature algorithm</title>
+      <link>https://valkheim.github.io/posts/binance_fix_signature/</link>
+      <pubDate>Sat, 15 Feb 2025 00:00:00 +0200</pubDate>
+      
+      <guid>https://valkheim.github.io/posts/binance_fix_signature/</guid>
+      <description>Computing the Binance Spot FIX API Logon Signature with Ed25519 in C++ Link to heading The Binance Spot FIX API provides a low-latency way to interact with the spot exchange using the Financial Information eXchange (FIX) protocol. Authentication for the connection happens during the initial Logon (MsgType=A) message, where you must provide a cryptographic signature in the RawData (96) field.
+According to the official Binance documentation, the signature is computed as follows:</description>
+    </item>
+    
+    <item>
       <title>ECW 2023 - TyCoon</title>
       <link>https://valkheim.github.io/posts/ecw-2023-tycoon/</link>
       <pubDate>Thu, 23 Nov 2023 00:00:00 +0200</pubDate>

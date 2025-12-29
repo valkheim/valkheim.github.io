@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>
+  Binance FIX API logon signature algorithm · Valkheim’s personal website
+</title>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+
+
+
+
+<meta name="author" content="valkheim">
+<meta name="description" content="Computing the Binance Spot FIX API Logon Signature with Ed25519 in C&#43;&#43; Link to heading The Binance Spot FIX API provides a low-latency way to interact with the spot exchange using the Financial Information eXchange (FIX) protocol. Authentication for the connection happens during the initial Logon (MsgType=A) message, where you must provide a cryptographic signature in the RawData (96) field.
+According to the official Binance documentation, the signature is computed as follows:">
+<meta name="keywords" content="blog,developer,personal">
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Binance FIX API logon signature algorithm"/>
+<meta name="twitter:description" content="Computing the Binance Spot FIX API Logon Signature with Ed25519 in C&#43;&#43; Link to heading The Binance Spot FIX API provides a low-latency way to interact with the spot exchange using the Financial Information eXchange (FIX) protocol. Authentication for the connection happens during the initial Logon (MsgType=A) message, where you must provide a cryptographic signature in the RawData (96) field.
+According to the official Binance documentation, the signature is computed as follows:"/>
+
+<meta property="og:title" content="Binance FIX API logon signature algorithm" />
+<meta property="og:description" content="Computing the Binance Spot FIX API Logon Signature with Ed25519 in C&#43;&#43; Link to heading The Binance Spot FIX API provides a low-latency way to interact with the spot exchange using the Financial Information eXchange (FIX) protocol. Authentication for the connection happens during the initial Logon (MsgType=A) message, where you must provide a cryptographic signature in the RawData (96) field.
+According to the official Binance documentation, the signature is computed as follows:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://valkheim.github.io/posts/binance_fix_signature/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2025-02-15T00:00:00+02:00" />
+<meta property="article:modified_time" content="2025-02-15T00:00:00+02:00" />
+
+
+
+
+
+<link rel="canonical" href="https://valkheim.github.io/posts/binance_fix_signature/">
+
+
+<link rel="preload" href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as="font" type="font/woff2" crossorigin>
+
+
+  
+  
+  <link rel="stylesheet" href="/css/coder.min.c4d7e93a158eda5a65b3df343745d2092a0a1e2170feeec909b8a89443903c6a.css" integrity="sha256-xNfpOhWO2lpls980N0XSCSoKHiFw/u7JCbiolEOQPGo=" crossorigin="anonymous" media="screen" />
+
+
+
+
+
+
+  
+    
+    
+    <link rel="stylesheet" href="/css/coder-dark.min.78b5fe3864945faf5207fb8fe3ab2320d49c3365def0e88ac1df0ddadc54a03c.css" integrity="sha256-eLX&#43;OGSUX69SB/uP46sjINScM2Xe8OiKwd8N2txUoDw=" crossorigin="anonymous" media="screen" />
+  
+
+
+
+ 
+
+
+
+
+<link rel="icon" type="image/png" href="/images/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/images/favicon-16x16.png" sizes="16x16">
+
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+
+<meta name="generator" content="Hugo 0.104.3" />
+
+
+
+
+<link rel="stylesheet" href="https://valkheim.github.iocss/custom.css">
+  </head>
+
+
+
+
+
+
+<body class="preload-transitions colorscheme-dark">
+  
+<div class="float-container">
+    <a id="dark-mode-toggle" class="colorscheme-toggle">
+        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
+    </a>
+</div>
+
+
+  <main class="wrapper">
+    <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">
+      Valkheim’s personal website
+    </a>
+    
+      <input type="checkbox" id="menu-toggle" />
+      <label class="menu-button float-right" for="menu-toggle">
+        <i class="fa fa-bars fa-fw" aria-hidden="true"></i>
+      </label>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/about/">About</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/posts/">Blog</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/projects/">Projects</a>
+            </li>
+          
+        
+        
+      </ul>
+    
+  </section>
+</nav>
+
+
+    <div class="content">
+      
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">
+            <a class="title-link" href="https://valkheim.github.io/posts/binance_fix_signature/">
+              Binance FIX API logon signature algorithm
+            </a>
+          </h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <time datetime="2025-02-15T00:00:00&#43;02:00">
+                February 15, 2025
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fa fa-clock-o" aria-hidden="true"></i>
+              4-minute read
+            </span>
+          </div>
+          
+          
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <h1 id="computing-the-binance-spot-fix-api-logon-signature-with-ed25519-in-c">
+  Computing the Binance Spot FIX API Logon Signature with Ed25519 in C++
+  <a class="heading-link" href="#computing-the-binance-spot-fix-api-logon-signature-with-ed25519-in-c">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h1>
+<p>The <strong>Binance Spot FIX API</strong> provides a low-latency way to interact with the spot exchange using the Financial Information eXchange (FIX) protocol. Authentication for the connection happens during the initial <strong>Logon (MsgType=A)</strong> message, where you must provide a cryptographic signature in the <code>RawData (96)</code> field.</p>
+<p>According to the <a href="https://developers.binance.com/docs/binance-spot-api-docs/fix-api#signaturecomputation">official Binance documentation</a>, the signature is computed as follows:</p>
+<h3 id="signature-computation-steps">
+  Signature Computation Steps
+  <a class="heading-link" href="#signature-computation-steps">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<ol>
+<li><strong>Construct the payload</strong>:
+Concatenate these field values in exact order, separated by the SOH character (<code>\x01</code> or ASCII 1):
+<ul>
+<li><code>MsgType (35)</code>: <code>&quot;A&quot;</code></li>
+<li><code>SenderCompID (49)</code>: Your chosen sender identifier</li>
+<li><code>TargetCompID (56)</code>: <code>&quot;SPOT&quot;</code></li>
+<li><code>MsgSeqNum (34)</code>: Usually <code>&quot;1&quot;</code> for the logon</li>
+<li><code>SendingTime (52)</code>: UTC timestamp in format <code>YYYYMMDD-HH:MM:SS</code> (or with milliseconds)</li>
+</ul>
+</li>
+<li><strong>Sign the payload</strong> using your <strong>Ed25519 private key</strong> (pure Ed25519, no hashing required).</li>
+<li><strong>Base64-encode</strong> the resulting 64-byte signature.</li>
+<li>Place the base64 string in <code>RawData (96)</code> and its length in <code>RawDataLength (95)</code> of the Logon message.</li>
+</ol>
+<p>Binance only supports <strong>Ed25519</strong> keys for FIX sessions.</p>
+<h3 id="c-implementation-using-openssls-high-level-evp-api">
+  C++ Implementation Using OpenSSL&rsquo;s high-level EVP API
+  <a class="heading-link" href="#c-implementation-using-openssls-high-level-evp-api">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>First let&rsquo;s define the following:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#66d9ef">constexpr</span> <span style="color:#66d9ef">auto</span> ED25519_SIGSIZE <span style="color:#f92672">=</span> <span style="color:#ae81ff">64</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span><span style="color:#66d9ef">constexpr</span> std<span style="color:#f92672">::</span>string_view SOH <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\x01</span><span style="color:#e6db74">&#34;</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span><span style="color:#66d9ef">enum</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">sign_error</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">uint8_t</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>    invalid_input,
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>    close_pkey,
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>    mdctx,
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>    digest_sign_init,
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>    digest_sign,
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>};
+</span></span></code></pre></div><h4 id="loading-the-private-key-pem-format">
+  Loading the Private Key (PEM format)
+  <a class="heading-link" href="#loading-the-private-key-pem-format">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#66d9ef">auto</span> <span style="color:#a6e22e">load_private_key</span>(<span style="color:#66d9ef">const</span> std<span style="color:#f92672">::</span>string <span style="color:#f92672">&amp;</span>path) <span style="color:#f92672">-&gt;</span> std<span style="color:#f92672">::</span>expected<span style="color:#f92672">&lt;</span>EVP_PKEY <span style="color:#f92672">*</span>, sign_error<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>    FILE <span style="color:#f92672">*</span>fp <span style="color:#f92672">=</span> fopen(path.c_str(), <span style="color:#e6db74">&#34;r&#34;</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>    <span style="color:#66d9ef">if</span> (fp <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>        <span style="color:#66d9ef">return</span> std<span style="color:#f92672">::</span>unexpected(sign_error<span style="color:#f92672">::</span>invalid_input);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>    EVP_PKEY <span style="color:#f92672">*</span>private_key <span style="color:#f92672">=</span> PEM_read_PrivateKey(fp, <span style="color:#66d9ef">nullptr</span>, <span style="color:#66d9ef">nullptr</span>, <span style="color:#66d9ef">nullptr</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>    <span style="color:#66d9ef">if</span> (fclose(fp) <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>        <span style="color:#66d9ef">return</span> std<span style="color:#f92672">::</span>unexpected(sign_error<span style="color:#f92672">::</span>close_pkey);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>    <span style="color:#66d9ef">return</span> private_key;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>}
+</span></span></code></pre></div><p>This reads a standard PEM-encoded Ed25519 private key file.</p>
+<h4 id="signing-with-ed25519-pure-signature">
+  Signing with Ed25519 (Pure Signature)
+  <a class="heading-link" href="#signing-with-ed25519-pure-signature">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#66d9ef">auto</span> <span style="color:#a6e22e">sign_ed25519</span>(EVP_PKEY <span style="color:#f92672">*</span>pkey, std<span style="color:#f92672">::</span>string_view <span style="color:#f92672">&amp;&amp;</span>payload, std<span style="color:#f92672">::</span>array<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">char</span>, ED25519_SIGSIZE<span style="color:#f92672">&gt;</span> <span style="color:#f92672">&amp;</span>signature) <span style="color:#f92672">-&gt;</span> std<span style="color:#f92672">::</span>expected<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">void</span>, sign_error<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>    std<span style="color:#f92672">::</span>expected<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">void</span>, sign_error<span style="color:#f92672">&gt;</span> ret;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>    std<span style="color:#f92672">::</span>size_t signature_length <span style="color:#f92672">=</span> signature.size();
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>    EVP_MD_CTX <span style="color:#f92672">*</span>mdctx <span style="color:#f92672">=</span> EVP_MD_CTX_create();
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>    <span style="color:#66d9ef">if</span> (mdctx <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>        ret <span style="color:#f92672">=</span> std<span style="color:#f92672">::</span>unexpected(sign_error<span style="color:#f92672">::</span>mdctx);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>        <span style="color:#66d9ef">goto</span> err_md_ctx;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>    <span style="color:#66d9ef">if</span> (EVP_DigestSignInit(mdctx, <span style="color:#66d9ef">nullptr</span>, <span style="color:#66d9ef">nullptr</span>, <span style="color:#66d9ef">nullptr</span>, pkey) <span style="color:#f92672">!=</span> <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>        ret <span style="color:#f92672">=</span> std<span style="color:#f92672">::</span>unexpected(sign_error<span style="color:#f92672">::</span>digest_sign_init);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>        <span style="color:#66d9ef">goto</span> err_digest;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>    <span style="color:#66d9ef">if</span> (EVP_DigestSign(mdctx, signature.data(), <span style="color:#f92672">&amp;</span>signature_length, <span style="color:#66d9ef">reinterpret_cast</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">const</span> <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*&gt;</span>(payload.data()), payload.size()) <span style="color:#f92672">!=</span> <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span>        ret <span style="color:#f92672">=</span> std<span style="color:#f92672">::</span>unexpected(sign_error<span style="color:#f92672">::</span>digest_sign);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span>        <span style="color:#66d9ef">goto</span> err_digest;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span>    <span style="color:#66d9ef">return</span> ret;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span>err_digest:
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span>    EVP_MD_CTX_destroy(mdctx);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span><span>err_md_ctx:
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span><span>    <span style="color:#66d9ef">return</span> ret;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span><span>}
+</span></span></code></pre></div><h4 id="base64-encoding">
+  Base64 Encoding
+  <a class="heading-link" href="#base64-encoding">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span><span style="color:#66d9ef">auto</span> <span style="color:#a6e22e">base64_encode</span>(std<span style="color:#f92672">::</span>array<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">char</span>, ED25519_SIGSIZE<span style="color:#f92672">&gt;</span> signature) <span style="color:#f92672">-&gt;</span> std<span style="color:#f92672">::</span>string
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span>    <span style="color:#75715e">// 3 input bytes produces 4 output bytes (padding included) so we ceil(siglen / 3) * 4 and add 1 for NUL
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">constexpr</span> <span style="color:#66d9ef">auto</span> size <span style="color:#f92672">=</span> ((ED25519_SIGSIZE <span style="color:#f92672">/</span> <span style="color:#ae81ff">3</span>) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">*</span> <span style="color:#ae81ff">4</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span><span>    std<span style="color:#f92672">::</span>string output(size, <span style="color:#e6db74">&#39;\0&#39;</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span><span>    EVP_EncodeBlock(<span style="color:#66d9ef">reinterpret_cast</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*&gt;</span>(output.data()), signature.data(), signature.size());
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7</span><span>    <span style="color:#66d9ef">return</span> output;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8</span><span>}
+</span></span></code></pre></div><p>Uses OpenSSL&rsquo;s <code>EVP_EncodeBlock</code> for standard base64 (with padding).</p>
+<h4 id="5-main-function">
+  5. Main Function
+  <a class="heading-link" href="#5-main-function">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h4>
+<p>Now that we have all foundation blocks, we can write a signature generation function</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#66d9ef">auto</span> <span style="color:#a6e22e">generate_signature</span>(<span style="color:#66d9ef">const</span> std<span style="color:#f92672">::</span>string <span style="color:#f92672">&amp;</span>key_path, <span style="color:#66d9ef">const</span> std<span style="color:#f92672">::</span>string <span style="color:#f92672">&amp;</span>sender_comp_id, <span style="color:#66d9ef">const</span> std<span style="color:#f92672">::</span>string <span style="color:#f92672">&amp;</span>sending_time) <span style="color:#f92672">-&gt;</span> std<span style="color:#f92672">::</span>string
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>    <span style="color:#66d9ef">auto</span> private_key <span style="color:#f92672">=</span> load_private_key(key_path);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>    <span style="color:#66d9ef">if</span> (not private_key.has_value())
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>        <span style="color:#66d9ef">return</span> {};
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>    <span style="color:#66d9ef">auto</span> payload <span style="color:#f92672">=</span> (<span style="color:#e6db74">&#34;A&#34;</span> <span style="color:#f92672">+</span>                               <span style="color:#75715e">// 35: MsgType
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span><span style="color:#75715e"></span>                    std<span style="color:#f92672">::</span>string(SOH) <span style="color:#f92672">+</span> sender_comp_id <span style="color:#f92672">+</span> <span style="color:#75715e">// 49: SenderCompId
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span><span style="color:#75715e"></span>                    std<span style="color:#f92672">::</span>string(SOH) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;SPOT&#34;</span> <span style="color:#f92672">+</span>         <span style="color:#75715e">// 56: TargetCompId
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span><span style="color:#75715e"></span>                    std<span style="color:#f92672">::</span>string(SOH) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;1&#34;</span> <span style="color:#f92672">+</span>            <span style="color:#75715e">// 34: MsgSeqNum
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span><span style="color:#75715e"></span>                    std<span style="color:#f92672">::</span>string(SOH) <span style="color:#f92672">+</span> sending_time     <span style="color:#75715e">// 52: SendingTime
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span><span style="color:#75715e"></span>    );
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>    std<span style="color:#f92672">::</span>array<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">char</span>, ED25519_SIGSIZE<span style="color:#f92672">&gt;</span> signature;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>    <span style="color:#66d9ef">if</span> (not sign_ed25519(<span style="color:#f92672">*</span>private_key, std<span style="color:#f92672">::</span>move(payload), signature).has_value())
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>        libmarket<span style="color:#f92672">::</span>log<span style="color:#f92672">::</span>error(<span style="color:#e6db74">&#34;failed to generate signature&#34;</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span>        EVP_PKEY_free(<span style="color:#f92672">*</span>private_key);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span>        <span style="color:#66d9ef">return</span> {};
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span>    EVP_PKEY_free(<span style="color:#f92672">*</span>private_key);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span>    <span style="color:#66d9ef">return</span> base64_encode(signature);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span>}
+</span></span></code></pre></div><h3 id="validation">
+  Validation
+  <a class="heading-link" href="#validation">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>Binance provides test values in the docs:</p>
+<ul>
+<li>Payload fields: <code>A</code>, <code>EXAMPLE</code>, <code>SPOT</code>, <code>1</code>, <code>20240627-11:17:25.223</code></li>
+<li>Test private key (do <strong>not</strong> use in production!)</li>
+<li>Expected base64 signature:<br>
+<code>4MHXelVVcpkdwuLbl6n73HQUXUf1dse2PCgT1DYqW9w8AVZ1RACFGM+5UdlGPrQHrgtS3CvsRURC1oj73j8gCA==</code></li>
+</ul>
+<p>You can plug these into the function to verify correctness or write a unit test like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;gtest/gtest.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;libmarket/binance.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>TEST(signature, sample_signature)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>    <span style="color:#75715e">// See https://developers.binance.com/docs/binance-spot-api-docs/testnet/fix-api#how-to-sign-logona-request
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span> signature <span style="color:#f92672">=</span> libmarket<span style="color:#f92672">::</span>binance<span style="color:#f92672">::</span>signature<span style="color:#f92672">::</span>generate_signature(
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>        <span style="color:#e6db74">&#34;libmarket-utest/res/sample.pem&#34;</span>,
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>        <span style="color:#e6db74">&#34;EXAMPLE&#34;</span>,
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>        <span style="color:#e6db74">&#34;20240627-11:17:25.223&#34;</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span> expected <span style="color:#f92672">=</span> std<span style="color:#f92672">::</span>string(<span style="color:#e6db74">&#34;4MHXelVVcpkdwuLbl6n73HQUXUf1dse2PCgT1DYqW9w8AVZ1RACFGM+5UdlGPrQHrgtS3CvsRURC1oj73j8gCA==&#34;</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>    EXPECT_EQ(signature, expected);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>}
+</span></span></code></pre></div><h3 id="usage-with-the-quickfix-engine">
+  Usage with the QuickFIX engine
+  <a class="heading-link" href="#usage-with-the-quickfix-engine">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>You&rsquo;ll have to build your admin logon message like so:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">toAdmin</span>(FIX<span style="color:#f92672">::</span>Message <span style="color:#f92672">&amp;</span>message, <span style="color:#66d9ef">const</span> FIX<span style="color:#f92672">::</span>SessionID <span style="color:#f92672">&amp;</span>session_id) <span style="color:#66d9ef">override</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>    <span style="color:#66d9ef">if</span> (message.getHeader().getField(FIX<span style="color:#f92672">::</span>FIELD<span style="color:#f92672">::</span>MsgType) <span style="color:#f92672">==</span> FIX<span style="color:#f92672">::</span>MsgType_Logon)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>        std<span style="color:#f92672">::</span>string sender_comp_id <span style="color:#f92672">=</span> session_id.getSenderCompID();
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>        std<span style="color:#f92672">::</span>string sending_time <span style="color:#f92672">=</span> message.getHeader().getField(FIX<span style="color:#f92672">::</span>FIELD<span style="color:#f92672">::</span>SendingTime);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>        std<span style="color:#f92672">::</span>string signature <span style="color:#f92672">=</span> libmarket<span style="color:#f92672">::</span>binance<span style="color:#f92672">::</span>signature<span style="color:#f92672">::</span>generate_signature(config_.auth.private_key_path, sender_comp_id, sending_time);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>        message.setField(FIX<span style="color:#f92672">::</span>RawDataLength(<span style="color:#66d9ef">static_cast</span><span style="color:#f92672">&lt;</span>FIX<span style="color:#f92672">::</span>LENGTH<span style="color:#f92672">&gt;</span>(signature.size()))); <span style="color:#75715e">// narrowing is OK
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span><span style="color:#75715e"></span>        message.setField(FIX<span style="color:#f92672">::</span>RawData(signature));
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>        message.setField(FIX<span style="color:#f92672">::</span>Username(config_.auth.api_key));
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>        message.setField(FIX<span style="color:#f92672">::</span>StringField(MessageHandling, <span style="color:#e6db74">&#34;1&#34;</span>));
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>}
+</span></span></code></pre></div><h3 id="summary">
+  Summary
+  <a class="heading-link" href="#summary">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>This C++ code offers a clean, robust way to generate the required Logon signature using OpenSSL. It handles key loading, payload construction, pure Ed25519 signing, and base64 encoding—all exactly as specified by Binance.</p>
+<p>When integrating into a full FIX client, call <code>generate_signature()</code> just before sending the Logon message, populate <code>RawData (96)</code> with the result, and ensure <code>SendingTime (52)</code> is accurate (within ~1 second of server time).</p>
+<p>Happy trading, and keep your private keys secure!</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+    </div>
+
+    <footer class="footer">
+  <section class="container">
+    
+  </section>
+</footer>
+
+  </main>
+
+  
+
+  
+  
+  <script src="/js/coder.min.236049395dc3682fb2719640872958e12f1f24067bb09c327b233e6290c7edac.js" integrity="sha256-I2BJOV3DaC&#43;ycZZAhylY4S8fJAZ7sJwyeyM&#43;YpDH7aw="></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+
+</html>
