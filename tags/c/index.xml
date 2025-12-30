@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>c on Valkheim’s personal website</title>
+    <link>https://valkheim.github.io/tags/c/</link>
+    <description>Recent content in c on Valkheim’s personal website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Fri, 25 Jul 2025 00:00:00 +0200</lastBuildDate><atom:link href="https://valkheim.github.io/tags/c/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>KCP and Wirehair</title>
+      <link>https://valkheim.github.io/posts/kcp/</link>
+      <pubDate>Fri, 25 Jul 2025 00:00:00 +0200</pubDate>
+      
+      <guid>https://valkheim.github.io/posts/kcp/</guid>
+      <description>KCP and Wirehair are both used in networking to improve data transmission, but they serve different purposes and are suited for different scenarios.
+Before diving into details, here is a quick overview:
+KCP Wirehair type reliable ARQ Fountain code (FEC) best for real-time, low latency apps high packet loss, one-to-many broadcasts latency optimized encoding/decoding latency packet loss retransmission (ARQ) forward error correction (FEC) use case gaming, live streaming multicast streaming overhead 10-20% bandwidth depends on FEC redundancy ordering preserved no inherent ordering feedback requires ACKS for reliability no feedback needed KCP Link to heading KCP is a fast ans reliable ARQ (Automatic Repeat-reQuest) protocol typically implemented over UDP.</description>
+    </item>
+    
+  </channel>
+</rss>

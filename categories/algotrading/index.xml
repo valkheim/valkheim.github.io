@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>algotrading on Valkheim’s personal website</title>
+    <link>https://valkheim.github.io/categories/algotrading/</link>
+    <description>Recent content in algotrading on Valkheim’s personal website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sat, 15 Feb 2025 00:00:00 +0200</lastBuildDate><atom:link href="https://valkheim.github.io/categories/algotrading/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Binance Spot FIX API Logon Signature in C&#43;&#43;</title>
+      <link>https://valkheim.github.io/posts/binance_fix_signature/</link>
+      <pubDate>Sat, 15 Feb 2025 00:00:00 +0200</pubDate>
+      
+      <guid>https://valkheim.github.io/posts/binance_fix_signature/</guid>
+      <description>Computing the Binance Spot FIX API Logon Signature with Ed25519 in C++ Link to heading The Binance Spot FIX API provides a low-latency way to interact with the spot exchange using the Financial Information eXchange (FIX) protocol. Authentication for the connection happens during the initial Logon (MsgType=A) message, where you must provide a cryptographic signature in the RawData (96) field.
+According to the official Binance documentation, the signature is computed as follows:</description>
+    </item>
+    
+    <item>
+      <title>C&#43;&#43; performance: Case study of a limit order book</title>
+      <link>https://valkheim.github.io/posts/book_cpp/</link>
+      <pubDate>Sat, 21 Dec 2024 00:00:00 +0200</pubDate>
+      
+      <guid>https://valkheim.github.io/posts/book_cpp/</guid>
+      <description>Introduction Link to heading In the high-stakes world of financial trading, where milliseconds can mean the difference between profit and loss, software efficiency isn&amp;rsquo;t just a nice-to-have—it&amp;rsquo;s a competitive edge. High-frequency trading (HFT) systems process millions of orders per second, demanding code that runs at breakneck speeds while managing vast amounts of real-time data. At the heart of these systems lies the order book, a dynamic structure that tracks buy (bid) and sell (ask) orders for a given asset, sorted by price and time priority.</description>
+    </item>
+    
+  </channel>
+</rss>

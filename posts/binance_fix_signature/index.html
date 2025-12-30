@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>
-  Binance FIX API logon signature algorithm · Valkheim’s personal website
+  Binance Spot FIX API Logon Signature in C&#43;&#43; · Valkheim’s personal website
 </title>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,11 +17,11 @@ According to the official Binance documentation, the signature is computed as fo
 <meta name="keywords" content="blog,developer,personal">
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Binance FIX API logon signature algorithm"/>
+<meta name="twitter:title" content="Binance Spot FIX API Logon Signature in C&#43;&#43;"/>
 <meta name="twitter:description" content="Computing the Binance Spot FIX API Logon Signature with Ed25519 in C&#43;&#43; Link to heading The Binance Spot FIX API provides a low-latency way to interact with the spot exchange using the Financial Information eXchange (FIX) protocol. Authentication for the connection happens during the initial Logon (MsgType=A) message, where you must provide a cryptographic signature in the RawData (96) field.
 According to the official Binance documentation, the signature is computed as follows:"/>
 
-<meta property="og:title" content="Binance FIX API logon signature algorithm" />
+<meta property="og:title" content="Binance Spot FIX API Logon Signature in C&#43;&#43;" />
 <meta property="og:description" content="Computing the Binance Spot FIX API Logon Signature with Ed25519 in C&#43;&#43; Link to heading The Binance Spot FIX API provides a low-latency way to interact with the spot exchange using the Financial Information eXchange (FIX) protocol. Authentication for the connection happens during the initial Logon (MsgType=A) message, where you must provide a cryptographic signature in the RawData (96) field.
 According to the official Binance documentation, the signature is computed as follows:" />
 <meta property="og:type" content="article" />
@@ -137,7 +137,7 @@ According to the official Binance documentation, the signature is computed as fo
         <div class="post-title">
           <h1 class="title">
             <a class="title-link" href="https://valkheim.github.io/posts/binance_fix_signature/">
-              Binance FIX API logon signature algorithm
+              Binance Spot FIX API Logon Signature in C&#43;&#43;
             </a>
           </h1>
         </div>
@@ -155,8 +155,20 @@ According to the official Binance documentation, the signature is computed as fo
             </span>
           </div>
           
-          
-          
+          <div class="categories">
+  <i class="fa fa-folder" aria-hidden="true"></i>
+    <a href="/categories/algotrading/">algotrading</a></div>
+
+          <div class="tags">
+  <i class="fa fa-tag" aria-hidden="true"></i>
+    <span class="tag">
+      <a href="/tags/algotrading/">algotrading</a>
+    </span>
+      <span class="separator">•</span>
+    <span class="tag">
+      <a href="/tags/c&#43;&#43;/">c&#43;&#43;</a>
+    </span></div>
+
         </div>
       </header>
 
@@ -363,7 +375,8 @@ Concatenate these field values in exact order, separated by the SOH character (<
     <span class="sr-only">Link to heading</span>
   </a>
 </h3>
-<p>You&rsquo;ll have to build your admin logon message like so:</p>
+<p>When integrating into a full FIX client, call <code>generate_signature()</code> just before sending the Logon message, populate <code>RawData (96)</code> with the result, and ensure <code>SendingTime (52)</code> is accurate.</p>
+<p>Wiht QuickFIX, you&rsquo;ll have to craft your outgoing admin logon message like this:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">toAdmin</span>(FIX<span style="color:#f92672">::</span>Message <span style="color:#f92672">&amp;</span>message, <span style="color:#66d9ef">const</span> FIX<span style="color:#f92672">::</span>SessionID <span style="color:#f92672">&amp;</span>session_id) <span style="color:#66d9ef">override</span>
 </span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>{
 </span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>    <span style="color:#66d9ef">if</span> (message.getHeader().getField(FIX<span style="color:#f92672">::</span>FIELD<span style="color:#f92672">::</span>MsgType) <span style="color:#f92672">==</span> FIX<span style="color:#f92672">::</span>MsgType_Logon)
@@ -385,8 +398,6 @@ Concatenate these field values in exact order, separated by the SOH character (<
   </a>
 </h3>
 <p>This C++ code offers a clean, robust way to generate the required Logon signature using OpenSSL. It handles key loading, payload construction, pure Ed25519 signing, and base64 encoding—all exactly as specified by Binance.</p>
-<p>When integrating into a full FIX client, call <code>generate_signature()</code> just before sending the Logon message, populate <code>RawData (96)</code> with the result, and ensure <code>SendingTime (52)</code> is accurate (within ~1 second of server time).</p>
-<p>Happy trading, and keep your private keys secure!</p>
 
       </div>
 

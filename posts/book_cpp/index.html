@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>
+  C&#43;&#43; performance: Case study of a limit order book · Valkheim’s personal website
+</title>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+
+
+
+
+<meta name="author" content="valkheim">
+<meta name="description" content="Introduction Link to heading In the high-stakes world of financial trading, where milliseconds can mean the difference between profit and loss, software efficiency isn&rsquo;t just a nice-to-have—it&rsquo;s a competitive edge. High-frequency trading (HFT) systems process millions of orders per second, demanding code that runs at breakneck speeds while managing vast amounts of real-time data. At the heart of these systems lies the order book, a dynamic structure that tracks buy (bid) and sell (ask) orders for a given asset, sorted by price and time priority.">
+<meta name="keywords" content="blog,developer,personal">
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="C&#43;&#43; performance: Case study of a limit order book"/>
+<meta name="twitter:description" content="Introduction Link to heading In the high-stakes world of financial trading, where milliseconds can mean the difference between profit and loss, software efficiency isn&rsquo;t just a nice-to-have—it&rsquo;s a competitive edge. High-frequency trading (HFT) systems process millions of orders per second, demanding code that runs at breakneck speeds while managing vast amounts of real-time data. At the heart of these systems lies the order book, a dynamic structure that tracks buy (bid) and sell (ask) orders for a given asset, sorted by price and time priority."/>
+
+<meta property="og:title" content="C&#43;&#43; performance: Case study of a limit order book" />
+<meta property="og:description" content="Introduction Link to heading In the high-stakes world of financial trading, where milliseconds can mean the difference between profit and loss, software efficiency isn&rsquo;t just a nice-to-have—it&rsquo;s a competitive edge. High-frequency trading (HFT) systems process millions of orders per second, demanding code that runs at breakneck speeds while managing vast amounts of real-time data. At the heart of these systems lies the order book, a dynamic structure that tracks buy (bid) and sell (ask) orders for a given asset, sorted by price and time priority." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://valkheim.github.io/posts/book_cpp/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-12-21T00:00:00+02:00" />
+<meta property="article:modified_time" content="2024-12-21T00:00:00+02:00" />
+
+
+
+
+
+<link rel="canonical" href="https://valkheim.github.io/posts/book_cpp/">
+
+
+<link rel="preload" href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as="font" type="font/woff2" crossorigin>
+
+
+  
+  
+  <link rel="stylesheet" href="/css/coder.min.c4d7e93a158eda5a65b3df343745d2092a0a1e2170feeec909b8a89443903c6a.css" integrity="sha256-xNfpOhWO2lpls980N0XSCSoKHiFw/u7JCbiolEOQPGo=" crossorigin="anonymous" media="screen" />
+
+
+
+
+
+
+  
+    
+    
+    <link rel="stylesheet" href="/css/coder-dark.min.78b5fe3864945faf5207fb8fe3ab2320d49c3365def0e88ac1df0ddadc54a03c.css" integrity="sha256-eLX&#43;OGSUX69SB/uP46sjINScM2Xe8OiKwd8N2txUoDw=" crossorigin="anonymous" media="screen" />
+  
+
+
+
+ 
+
+
+
+
+<link rel="icon" type="image/png" href="/images/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/images/favicon-16x16.png" sizes="16x16">
+
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+
+<meta name="generator" content="Hugo 0.104.3" />
+
+
+
+
+<link rel="stylesheet" href="https://valkheim.github.iocss/custom.css">
+  </head>
+
+
+
+
+
+
+<body class="preload-transitions colorscheme-dark">
+  
+<div class="float-container">
+    <a id="dark-mode-toggle" class="colorscheme-toggle">
+        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
+    </a>
+</div>
+
+
+  <main class="wrapper">
+    <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">
+      Valkheim’s personal website
+    </a>
+    
+      <input type="checkbox" id="menu-toggle" />
+      <label class="menu-button float-right" for="menu-toggle">
+        <i class="fa fa-bars fa-fw" aria-hidden="true"></i>
+      </label>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/about/">About</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/posts/">Blog</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/projects/">Projects</a>
+            </li>
+          
+        
+        
+      </ul>
+    
+  </section>
+</nav>
+
+
+    <div class="content">
+      
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">
+            <a class="title-link" href="https://valkheim.github.io/posts/book_cpp/">
+              C&#43;&#43; performance: Case study of a limit order book
+            </a>
+          </h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <time datetime="2024-12-21T00:00:00&#43;02:00">
+                December 21, 2024
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fa fa-clock-o" aria-hidden="true"></i>
+              14-minute read
+            </span>
+          </div>
+          
+          <div class="categories">
+  <i class="fa fa-folder" aria-hidden="true"></i>
+    <a href="/categories/algotrading/">algotrading</a></div>
+
+          <div class="tags">
+  <i class="fa fa-tag" aria-hidden="true"></i>
+    <span class="tag">
+      <a href="/tags/algotrading/">algotrading</a>
+    </span>
+      <span class="separator">•</span>
+    <span class="tag">
+      <a href="/tags/c&#43;&#43;/">c&#43;&#43;</a>
+    </span></div>
+
+        </div>
+      </header>
+
+      <div>
+        
+        <h1 id="introduction">
+  Introduction
+  <a class="heading-link" href="#introduction">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h1>
+<p>In the high-stakes world of financial trading, where milliseconds can mean the difference between profit and loss, software efficiency isn&rsquo;t just a nice-to-have—it&rsquo;s a competitive edge. High-frequency trading (HFT) systems process millions of orders per second, demanding code that runs at breakneck speeds while managing vast amounts of real-time data. At the heart of these systems lies the <strong>order book</strong>, a dynamic structure that tracks buy (bid) and sell (ask) orders for a given asset, sorted by price and time priority.</p>
+<p>But why C++? Its low-level control over memory, direct hardware access, and support for advanced optimizations make it the language of choice for performance-critical applications like trading engines. In this blog post, we&rsquo;ll dive into practical optimization techniques tailored for an order book implementation.</p>
+<p>From leveraging data structures to exploiting cache locality and multithreading, we&rsquo;ll explore how to squeeze every ounce of performance out of your code. Along the way, I&rsquo;ll share code snippets and benchmarks to illustrate real-world gains, drawing from common pitfalls in trading software development.</p>
+<p>Let&rsquo;s get started by examining the core components of an order book and how naive implementations fall short in high-volume scenarios.</p>
+<h2 id="understanding-order-book-data-structures">
+  Understanding Order Book Data Structures
+  <a class="heading-link" href="#understanding-order-book-data-structures">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>A <strong>limit order book (LOB)</strong> is the core data structure in a trading matching engine. It maintains all outstanding buy (bid) and sell (ask) limit orders for an asset, organized to enable fast matching based on <strong>price-time priority</strong>:</p>
+<ul>
+<li><strong>Price priority</strong>: Best bids (highest price) and best asks (lowest price) match first.</li>
+<li><strong>Time priority</strong>: At the same price, older orders match before newer ones (FIFO).</li>
+</ul>
+<p>The book is split into two sides:</p>
+<ul>
+<li><strong>Bids</strong>: Sorted descending by price (best at the top).</li>
+<li><strong>Asks</strong>: Sorted ascending by price (best at the top).</li>
+</ul>
+<p>Each price level aggregates orders at that price, tracking total volume and often a queue of individual orders.</p>
+<h3 id="key-operations-and-requirements">
+  Key Operations and Requirements
+  <a class="heading-link" href="#key-operations-and-requirements">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>A production-grade order book must support:</p>
+<ul>
+<li><strong>Add order</strong>: Insert at a price level (append to time queue).</li>
+<li><strong>Cancel order</strong>: Remove by order ID.</li>
+<li><strong>Execute/reduce</strong>: Partially or fully fill an order.</li>
+<li><strong>Queries</strong>: Get best bid/offer (BBO), volume at price, depth traversal.</li>
+</ul>
+<p>These need to be extremely fast (often O(1) or amortized O(1)) because trading systems process millions of events per second. Cache efficiency, low latency, and predictable performance are critical in C++ implementations.</p>
+<h3 id="common-data-structure-choices">
+  Common Data Structure Choices
+  <a class="heading-link" href="#common-data-structure-choices">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>The most widely used and performant design (seen in many open-source HFT books and production systems) is:</p>
+<ul>
+<li>Price levels container: A sorted map or tree for price levels.</li>
+<li>Orders at each price level: A FIFO queue.</li>
+<li>Fast order lookup</li>
+</ul>
+<h2 id="the-dense-vector-based-order-book-a-high-performance-alternative">
+  The Dense Vector-Based Order Book: A High-Performance Alternative
+  <a class="heading-link" href="#the-dense-vector-based-order-book-a-high-performance-alternative">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>While the classic <code>std::map</code>-based order book excels in generality for sparse price levels, many real-world trading scenarios—especially in crypto, futures, or equities with fixed tick sizes—benefit from a dense array (vector) implementation. This approach trades some memory for blazing-fast access and updates, making it ideal when prices are discretized (e.g., integer ticks or multiplied by 100 for cents) and the price range is bounded.</p>
+<p>The core idea is that every book entry is indexed by its price.
+Assume prices are integers (or can be mapped to integers via tick size scaling). For example:</p>
+<ul>
+<li>Minimum price: 0</li>
+<li>Maximum price: 1,000,000 (covers most assets with sub-cent precision)</li>
+</ul>
+<p>We use two vectors:</p>
+<ul>
+<li><code>std::vector&lt;BookEntry&gt; bids_</code>;</li>
+<li><code>std::vector&lt;BookEntry&gt; offers_</code>;</li>
+</ul>
+<p>Each vector is sized to max_price + 1. The index corresponds directly to the price:</p>
+<ul>
+<li><code>bids_[price]</code> holds the aggregated quantity at that bid price.</li>
+<li><code>offers_[price]</code> holds the aggregated quantity at that ask price.</li>
+</ul>
+<h3 id="key-advantages">
+  Key Advantages
+  <a class="heading-link" href="#key-advantages">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<ul>
+<li><strong>O(1) access and updates</strong>: Add/cancel/reduce quantity at a price → direct index access.</li>
+<li><strong>Cache-friendly</strong>: Contiguous memory, excellent locality when scanning depth or matching.</li>
+<li><strong>No dynamic allocations</strong> per order (if aggregating quantity only).</li>
+<li><strong>Fast depth queries</strong>: Cumulative volume from best price is a simple loop over contiguous array.</li>
+</ul>
+<h3 id="trade-offs-and-limitations">
+  Trade-offs and Limitations
+  <a class="heading-link" href="#trade-offs-and-limitations">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<ul>
+<li><strong>Memory usage</strong>: Fixed size based on price range which can be huge depending on .</li>
+<li><strong>No time priority per se</strong>: This aggregates all orders at a price level into one quantity. True FIFO requires a separate queue per price (e.g., vector of deques or lists), adding complexity.</li>
+<li><strong>Sparse markets</strong>: Wasteful if prices span a huge range with few active levels (use map instead).</li>
+<li><strong>Cancel by ID</strong>: Requires a separate <code>unordered_map&lt;OrderID, Price&gt;</code> to locate the price level quickly.</li>
+</ul>
+<h3 id="when-to-use-this-structure">
+  When to Use This Structure
+  <a class="heading-link" href="#when-to-use-this-structure">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>Perfect for:</p>
+<ul>
+<li>Cryptocurrency spot markets (often integer or fixed-decimal prices).</li>
+<li>High-volume tick-based instruments.</li>
+<li>When you prioritize raw speed and can aggregate quantities (many HFT systems do this for the core book, handling individual orders separately).</li>
+</ul>
+<h2 id="a-ring-approach">
+  A Ring approach
+  <a class="heading-link" href="#a-ring-approach">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>While the vector-based order book is a very intuitive design, I&rsquo;ll be implementing a ring over each vector so the book is less prone to be resized.</p>
+<p>With this new design, The book will track the best bid and ask using a pointer on the vector. The data read for best entry remains O(1).</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#66d9ef">auto</span> Ring<span style="color:#f92672">::</span>get_best_bid() <span style="color:#66d9ef">const</span> <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">const</span> BookEntry <span style="color:#f92672">&amp;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>    assert(bids_end_ <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nullptr</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">*</span>bids_end_;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>}
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span><span style="color:#66d9ef">auto</span> Ring<span style="color:#f92672">::</span>get_best_offer() <span style="color:#66d9ef">const</span> <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">const</span> BookEntry <span style="color:#f92672">&amp;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>    assert(offers_begin_ <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nullptr</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">*</span>offers_begin_;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>}
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span><span style="color:#66d9ef">auto</span> Ring<span style="color:#f92672">::</span>top() <span style="color:#66d9ef">const</span> <span style="color:#f92672">-&gt;</span> std<span style="color:#f92672">::</span>tuple<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">const</span> BookEntry <span style="color:#f92672">&amp;</span>, <span style="color:#66d9ef">const</span> BookEntry <span style="color:#f92672">&amp;&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>    assert(bids_end_ <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nullptr</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>    assert(offers_begin_ <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nullptr</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>    <span style="color:#66d9ef">return</span> {<span style="color:#f92672">*</span>bids_end_, <span style="color:#f92672">*</span>offers_begin_};
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>}
+</span></span></code></pre></div><h2 id="book-entry">
+  Book entry
+  <a class="heading-link" href="#book-entry">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p><code>BookEntry</code> is simple: it&rsquo;s a price and quantity combo.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">alignas</span>(<span style="color:#ae81ff">16</span>) BookEntry
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>    OrderPrice price;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>    OrderQuantity quantity;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>    BookEntry() <span style="color:#f92672">:</span> price{<span style="color:#ae81ff">0</span>}, quantity{<span style="color:#ae81ff">0</span>} {}
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>    BookEntry(OrderPrice price, OrderQuantity quantity) <span style="color:#f92672">:</span> price{price}, quantity{quantity} {}
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>    <span style="color:#75715e">// Copy constructors are required for vector::resize operations (if resizing book depth becomes necessary)
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span><span style="color:#75715e"></span>};
+</span></span></code></pre></div><p>Using concepts, it can be defined like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#75715e">#if __cplusplus &gt;= 202002L
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;concepts&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span><span style="color:#75715e"></span><span style="color:#66d9ef">namespace</span> libmarket<span style="color:#f92672">::</span>book
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>    <span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>    <span style="color:#66d9ef">concept</span> IsBookEntry <span style="color:#f92672">=</span> <span style="color:#66d9ef">requires</span>(T e) {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>        { e.price } <span style="color:#f92672">-&gt;</span> std<span style="color:#f92672">::</span>convertible_to<span style="color:#f92672">&lt;</span>libmarket<span style="color:#f92672">::</span>market_data<span style="color:#f92672">::</span>OrderPrice<span style="color:#f92672">&gt;</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>        { e.quantity } <span style="color:#f92672">-&gt;</span> std<span style="color:#f92672">::</span>convertible_to<span style="color:#f92672">&lt;</span>libmarket<span style="color:#f92672">::</span>market_data<span style="color:#f92672">::</span>OrderQuantity<span style="color:#f92672">&gt;</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>    };
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>}
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span><span style="color:#75715e">#endif
+</span></span></span></code></pre></div><h2 id="handling-an-incoming-order">
+  Handling an incoming order
+  <a class="heading-link" href="#handling-an-incoming-order">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>Handling an incoming order in the book is a hot path. It has to be fast and should be easily benchmarked.</p>
+<p>The goal is to first find the book entry slot (aka orders index) corresponding to the order price.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#66d9ef">auto</span> Ring<span style="color:#f92672">::</span>handle(<span style="color:#66d9ef">const</span> Order <span style="color:#f92672">&amp;</span>e) <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">bool</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>    <span style="color:#75715e">// Decide if operating on bids_ or offers_ in a branchless manner
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">auto</span> type <span style="color:#f92672">=</span> <span style="color:#66d9ef">static_cast</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> std<span style="color:#f92672">::</span>underlying_type_t<span style="color:#f92672">&lt;</span>OrderType<span style="color:#f92672">&gt;&gt;</span>(e.type);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>    <span style="color:#66d9ef">auto</span> <span style="color:#f92672">**</span>begin <span style="color:#f92672">=</span> std<span style="color:#f92672">::</span>array<span style="color:#f92672">&lt;</span>BookEntry <span style="color:#f92672">**</span>, <span style="color:#ae81ff">2</span><span style="color:#f92672">&gt;</span>{<span style="color:#f92672">&amp;</span>bids_begin_, <span style="color:#f92672">&amp;</span>offers_begin_}[type];
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>    <span style="color:#66d9ef">auto</span> <span style="color:#f92672">**</span>end <span style="color:#f92672">=</span> std<span style="color:#f92672">::</span>array<span style="color:#f92672">&lt;</span>BookEntry <span style="color:#f92672">**</span>, <span style="color:#ae81ff">2</span><span style="color:#f92672">&gt;</span>{<span style="color:#f92672">&amp;</span>bids_end_, <span style="color:#f92672">&amp;</span>offers_end_}[type];
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>    <span style="color:#66d9ef">auto</span> <span style="color:#f92672">*</span>orders <span style="color:#f92672">=</span> std<span style="color:#f92672">::</span>array<span style="color:#f92672">&lt;</span>std<span style="color:#f92672">::</span>vector<span style="color:#f92672">&lt;</span>BookEntry<span style="color:#f92672">&gt;</span> <span style="color:#f92672">*</span>, <span style="color:#ae81ff">2</span><span style="color:#f92672">&gt;</span>{<span style="color:#f92672">&amp;</span>bids_, <span style="color:#f92672">&amp;</span>offers_}[type];
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span> index <span style="color:#f92672">=</span> find_index(orders, begin, end, e.price);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>    <span style="color:#66d9ef">if</span> (index <span style="color:#f92672">==</span> InvalidSlot)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>        <span style="color:#66d9ef">return</span> false;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>    <span style="color:#75715e">// Implying new order or order (atomic) update
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span><span style="color:#75715e"></span>    orders<span style="color:#f92672">-&gt;</span>at(index) <span style="color:#f92672">=</span> BookEntry(e.price, e.quantity);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>    <span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>}
+</span></span></code></pre></div><p>Note: The order deletion and trade execution are not discussed here as it won&rsquo;t add anything to our code optimization topic.</p>
+<h3 id="branchless-side-selection-bids-vs-offersasks">
+  Branchless Side Selection (Bids vs. Offers/Asks)
+  <a class="heading-link" href="#branchless-side-selection-bids-vs-offersasks">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>The code avoids an explicit <code>if (e.type == BID) { ... } else { ... }</code> branch when deciding whether to operate on the bids or asks side.</p>
+<p><strong>Why branchless?</strong> Modern CPUs use branch prediction to speculatively execute code, but mispredictions cost cycles which is devastating in tight loops processing millions of orders/sec. In trading, order types are often somewhat predictable (e.g., bursts of bids), but not perfectly. Making selection branchless eliminates prediction risk entirely.</p>
+<p>To do so, I cast <code>enum OrderType</code> to its underlying integer and use that integer as an index into small <code>std::array</code>s of pointers. The compiler generates a simple address calculation + load, no conditional jump.</p>
+<p>This is a classic <strong>array lookup dispatch</strong>. It&rsquo;s fast, predictable, and cache-friendly.</p>
+<h3 id="pointer-to-pointer-for-beginend-iterators">
+  Pointer-to-Pointer for Begin/End Iterators
+  <a class="heading-link" href="#pointer-to-pointer-for-beginend-iterators">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>Notice <code>auto **begin</code> and <code>auto **end</code> are <strong>pointers to pointers</strong> pointing to <code>bids_begin_</code> and <code>bids_end_</code>.
+These are member variables that cache pointers to the active range of the dense vector (e.g., the region with non-zero quantities). Using <code>**</code> allows passing them by reference into <code>find_index</code> without duplicating code for bids vs. asks.
+This enables <code>find_index</code> to potentially update the cached begin/end if the price extends the book depth—common in dense implementations to avoid scanning the entire vector every time.</p>
+<h2 id="finding-the-order-index-in-the-ring">
+  Finding the order index in the ring
+  <a class="heading-link" href="#finding-the-order-index-in-the-ring">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>Now the <code>find_index</code> function is where the complexity lies because of the ring design. You would be using the order price as index in a simpler design.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  1</span><span><span style="color:#66d9ef">auto</span> Ring<span style="color:#f92672">::</span>find_index(std<span style="color:#f92672">::</span>vector<span style="color:#f92672">&lt;</span>BookEntry<span style="color:#f92672">&gt;</span> <span style="color:#f92672">*</span>orders, BookEntry <span style="color:#f92672">**</span>begin, BookEntry <span style="color:#f92672">**</span>end, OrderPrice price) <span style="color:#66d9ef">const</span> <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">int64_t</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  2</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  3</span><span>    assert(price <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  4</span><span>    <span style="color:#a6e22e">[[assume(price &gt; 0)]]</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  5</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  6</span><span>    <span style="color:#75715e">// The begin / end window is not set yet
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  7</span><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">*</span>begin <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  8</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  9</span><span>        <span style="color:#f92672">*</span>begin <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>end <span style="color:#f92672">=</span> orders<span style="color:#f92672">-&gt;</span>data();
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 10</span><span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 11</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 12</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 13</span><span>    <span style="color:#75715e">// Test if fully the price/boundary distance overlaps the container
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 14</span><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span> fully_overlaps <span style="color:#f92672">=</span> (udiff((<span style="color:#f92672">*</span>end)<span style="color:#f92672">-&gt;</span>price, price) <span style="color:#f92672">/</span> depth_) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 15</span><span>    <span style="color:#66d9ef">if</span> (fully_overlaps)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 16</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 17</span><span>        <span style="color:#66d9ef">return</span> InvalidSlot;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 18</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 19</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 20</span><span>    <span style="color:#75715e">// Compute begin index (BI)
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 21</span><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">int64_t</span> begin_index <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>begin <span style="color:#f92672">-</span> orders<span style="color:#f92672">-&gt;</span>data();
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 22</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 23</span><span>    <span style="color:#75715e">// Test if price is inside the begin / end window
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 24</span><span><span style="color:#75715e"></span>    <span style="color:#75715e">// We must not to update pointers
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 25</span><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 26</span><span>    <span style="color:#75715e">// |00|00|00|13|00|00|00|07|00|00|
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 27</span><span><span style="color:#75715e"></span>    <span style="color:#75715e">//           EI          BI
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 28</span><span><span style="color:#75715e"></span>    <span style="color:#75715e">//  --------                -----| valid ranges for setting the new price
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 29</span><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> ((<span style="color:#f92672">*</span>begin)<span style="color:#f92672">-&gt;</span>price <span style="color:#f92672">&lt;=</span> price <span style="color:#f92672">&amp;&amp;</span> price <span style="color:#f92672">&lt;=</span> (<span style="color:#f92672">*</span>end)<span style="color:#f92672">-&gt;</span>price)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 30</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 31</span><span>        <span style="color:#66d9ef">auto</span> deviation <span style="color:#f92672">=</span> price <span style="color:#f92672">-</span> (<span style="color:#f92672">*</span>begin)<span style="color:#f92672">-&gt;</span>price;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 32</span><span>        <span style="color:#66d9ef">auto</span> price_index <span style="color:#f92672">=</span> libmarket<span style="color:#f92672">::</span>math<span style="color:#f92672">::</span>mod((begin_index <span style="color:#f92672">+</span> deviation), depth_);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 33</span><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">static_cast</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int64_t</span><span style="color:#f92672">&gt;</span>(price_index);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 34</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 35</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 36</span><span>    <span style="color:#75715e">// Price is outside the begin / end window
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 37</span><span><span style="color:#75715e"></span>    <span style="color:#75715e">// We must update pointers
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 38</span><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 39</span><span>    <span style="color:#75715e">// Compute price index (PI)
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 40</span><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">auto</span> deviation <span style="color:#f92672">=</span> libmarket<span style="color:#f92672">::</span>math<span style="color:#f92672">::</span>mod(udiff((<span style="color:#f92672">*</span>begin)<span style="color:#f92672">-&gt;</span>price, price), depth_);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 41</span><span>    <span style="color:#66d9ef">auto</span> pushing_low_boundary <span style="color:#f92672">=</span> price <span style="color:#f92672">&lt;</span> (<span style="color:#f92672">*</span>begin)<span style="color:#f92672">-&gt;</span>price;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 42</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 43</span><span>    <span style="color:#75715e">// XXX: check under/overflow for price_index computation
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 44</span><span><span style="color:#75715e"></span>    <span style="color:#75715e">// Being branchless here does not significantly decrease branch-misses, neither moving the modulo
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 45</span><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">auto</span> new_price_indexes <span style="color:#f92672">=</span> std<span style="color:#f92672">::</span>array<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">uint64_t</span>, <span style="color:#ae81ff">2</span><span style="color:#f92672">&gt;</span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 46</span><span>        (begin_index <span style="color:#f92672">+</span> deviation),         <span style="color:#75715e">// higher price index
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 47</span><span><span style="color:#75715e"></span>        (begin_index <span style="color:#f92672">+</span> depth_ <span style="color:#f92672">-</span> deviation) <span style="color:#75715e">// lower price index
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 48</span><span><span style="color:#75715e"></span>    };
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 49</span><span>    <span style="color:#66d9ef">auto</span> price_index <span style="color:#f92672">=</span> libmarket<span style="color:#f92672">::</span>math<span style="color:#f92672">::</span>mod(new_price_indexes[<span style="color:#66d9ef">static_cast</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">uint8_t</span><span style="color:#f92672">&gt;</span>(pushing_low_boundary)], depth_);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 50</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 51</span><span>    <span style="color:#75715e">// Compute end index (EI)
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 52</span><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">int64_t</span> end_index <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>end <span style="color:#f92672">-</span> orders<span style="color:#f92672">-&gt;</span>data();
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 53</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 54</span><span>    <span style="color:#75715e">// |10|00|00|13|00|00|00|07|00|00|
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 55</span><span><span style="color:#75715e"></span>    <span style="color:#75715e">//           EI          BI
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 56</span><span><span style="color:#75715e"></span>    <span style="color:#75715e">//              --------         | valid range for pushing data outside begin / end window
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 57</span><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (end_index <span style="color:#f92672">&lt;</span> begin_index)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 58</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 59</span><span>        <span style="color:#66d9ef">if</span> (price_index <span style="color:#f92672">&lt;=</span> end_index)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 60</span><span>        {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 61</span><span>            <span style="color:#66d9ef">return</span> InvalidSlot;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 62</span><span>        }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 63</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 64</span><span>        <span style="color:#66d9ef">if</span> (price_index <span style="color:#f92672">&gt;=</span> begin_index)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 65</span><span>        {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 66</span><span>            <span style="color:#66d9ef">return</span> InvalidSlot;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 67</span><span>        }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 68</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 69</span><span>        <span style="color:#66d9ef">goto</span> price_index_is_valid;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 70</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 71</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 72</span><span>    <span style="color:#75715e">// |00|00|00|07|00|00|00|10|00|00|
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 73</span><span><span style="color:#75715e"></span>    <span style="color:#75715e">//           BI          EI
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 74</span><span><span style="color:#75715e"></span>    <span style="color:#75715e">//  --------                -----| valid ranges for pushing data outside begin / end window
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 75</span><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (begin_index <span style="color:#f92672">&lt;</span> end_index)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 76</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 77</span><span>        <span style="color:#66d9ef">if</span> (price_index <span style="color:#f92672">&lt;</span> begin_index)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 78</span><span>        {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 79</span><span>            <span style="color:#66d9ef">goto</span> test_boundary_collision;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 80</span><span>        }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 81</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 82</span><span>        <span style="color:#66d9ef">if</span> (price_index <span style="color:#f92672">&gt;</span> end_index)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 83</span><span>        {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 84</span><span>            <span style="color:#66d9ef">goto</span> test_boundary_collision;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 85</span><span>        }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 86</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 87</span><span>        <span style="color:#66d9ef">return</span> InvalidSlot;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 88</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 89</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 90</span><span>test_boundary_collision:
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 91</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 92</span><span>    <span style="color:#66d9ef">if</span> (price_index <span style="color:#f92672">==</span> begin_index or price_index <span style="color:#f92672">==</span> end_index)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 93</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 94</span><span>        <span style="color:#66d9ef">return</span> InvalidSlot;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 95</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 96</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 97</span><span>price_index_is_valid:
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 98</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 99</span><span>    <span style="color:#75715e">// Push left or right boundary up to new price index
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">100</span><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">auto</span> <span style="color:#f92672">*</span>boundary <span style="color:#f92672">=</span> pushing_low_boundary <span style="color:#f92672">?</span> begin : end;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">101</span><span>    <span style="color:#f92672">*</span>boundary <span style="color:#f92672">=</span> orders<span style="color:#f92672">-&gt;</span>data() <span style="color:#f92672">+</span> price_index;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">102</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">103</span><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">static_cast</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int64_t</span><span style="color:#f92672">&gt;</span>(price_index);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">104</span><span>}
+</span></span></code></pre></div><p>This function has a straightforward design with emphasis on the hotpath.
+Gains are made by enhancing common operations such as the modulo and the absolute distance.</p>
+<h3 id="assume-attribute">
+  [[assume]] attribute
+  <a class="heading-link" href="#assume-attribute">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>The code snippet demonstrates a common C++ optimization technique introduced in C++23: pairing a runtime <code>assert</code> with the standard <code>[[assume]]</code> attribute.</p>
+<p>The <code>assume</code> expression is not evaluated at runtime so no code is generated for it.
+However, the compiler can use this knowledge for aggressive optimizations (e.g., eliminating bounds checks, choosing faster instruction sequences, propagating constants, or simplifying control flow).</p>
+<p>The compiler can:</p>
+<ul>
+<li>Eliminate redundant checks downstream (e.g., no need for division-by-price safeguards if price &gt; 0 guarantees no zero-division).</li>
+<li>Strength-propagate values (e.g., treat price as positive for better codegen in loops or math operations).</li>
+<li>Improve branch prediction or vectorization by knowing certain paths are impossible.</li>
+<li>Optimize operations like <code>1.0 / price</code> into faster approximations or mul-by-reciprocal if positivity/range is known.</li>
+</ul>
+<h3 id="better-modulo">
+  Better modulo
+  <a class="heading-link" href="#better-modulo">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>And because the book depth is a power of two, I can compute the mod faster.</p>
+<p>The standard <code>%</code> operator performs full integer division, which is slow on most CPUs. However, when the modulus <code>n</code> is a power of two (e.g., 1024 = 2¹⁰), a mathematical identity allows replacement with a simple bitwise AND: <code>a % n == a &amp; (n - 1)</code> for <code>a &gt;= 0 and n = 2^k</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#66d9ef">namespace</span> libmarket<span style="color:#f92672">::</span>math
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>    <span style="color:#a6e22e">[[nodiscard]]</span> <span style="color:#66d9ef">auto</span> is_power_of_two(<span style="color:#66d9ef">uint64_t</span> n) <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">bool</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>        <span style="color:#66d9ef">return</span> std<span style="color:#f92672">::</span>has_single_bit(n);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>    <span style="color:#a6e22e">[[nodiscard]]</span> <span style="color:#66d9ef">inline</span> <span style="color:#66d9ef">auto</span> _mod_branchless_power(<span style="color:#66d9ef">uint64_t</span> a, <span style="color:#66d9ef">uint64_t</span> n) <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">uint64_t</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>        assert(a <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>        assert(<span style="color:#66d9ef">constexpr</span> is_power_of_two(n));
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>        <span style="color:#66d9ef">return</span> (a <span style="color:#f92672">&amp;</span> (n <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>));
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>    <span style="color:#a6e22e">[[nodiscard]]</span> <span style="color:#66d9ef">inline</span> <span style="color:#66d9ef">auto</span> mod(<span style="color:#66d9ef">uint64_t</span> a, <span style="color:#66d9ef">uint64_t</span> n) <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">uint64_t</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">_mod_branchless_power</span>(a, n);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>}
+</span></span></code></pre></div><p>With this one you&rsquo;re saving a lot of cycles by relying on a simple bitwise AND.</p>
+<h3 id="enhanced-absolute-distance">
+  Enhanced absolute distance
+  <a class="heading-link" href="#enhanced-absolute-distance">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>Here is the <code>udiff</code> function that computes absolute difference (<code>(a &gt; b) ? a - b : b - a</code>):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span><span style="color:#75715e">// Branchless absolute difference for unsigned
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span><span style="color:#75715e"></span><span style="color:#a6e22e">[[nodiscard]]</span> <span style="color:#66d9ef">auto</span> udiff(OrderPrice a, OrderPrice b) <span style="color:#f92672">-&gt;</span> OrderPrice
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span>    <span style="color:#66d9ef">auto</span> n <span style="color:#f92672">=</span> (<span style="color:#66d9ef">unsigned</span>)((<span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span>)((<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span>)a <span style="color:#f92672">-</span> (<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span>)b) <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">32</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span><span>    <span style="color:#66d9ef">unsigned</span> result <span style="color:#f92672">=</span> a <span style="color:#f92672">-</span> b;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span><span>    <span style="color:#66d9ef">return</span> (result <span style="color:#f92672">^</span> n) <span style="color:#f92672">-</span> n;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7</span><span>}
+</span></span></code></pre></div><p>While this is nifty bit tricks and while this can help when you need guaranteed branchless behavior on obscure platforms. In practice on x86-64 with modern compilers, simpler code wins both in speed and readability (think <code>cmov</code>).</p>
+<p>These kinds of micro-optimizations however remind us why C++ remains king in latency-sensitive trading engines: (total) control over the generated assembly when you need it.</p>
+<h2 id="benchmarking">
+  Benchmarking
+  <a class="heading-link" href="#benchmarking">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>In performance-critical systems like a trading order book, optimizations often target microsecond or nanosecond gains. A change that looks brilliant in theory can underperform in practice due to cache effects, branch prediction, or allocator overhead. Without rigorous benchmarking, you risk deploying slower code or wasting time on irrelevant tweaks.</p>
+<p>Benchmarking provides:</p>
+<ul>
+<li><strong>Objective evidence</strong>: Quantifies if an optimization actually improves latency, throughput, or memory usage.</li>
+<li><strong>Guidance for decisions</strong>: In our vector-based order book, benchmarks will reveal if O(1) indexed access beats <code>std::map</code>&rsquo;s O(log N) in real workloads.</li>
+<li><strong>Detection of regressions</strong>: Ensures new features don&rsquo;t degrade performance.</li>
+<li><strong>Realism in trading</strong>: HFT systems handle bursty, high-volume order flows; benchmarks simulating market data feeds expose bottlenecks that unit tests miss.</li>
+</ul>
+<h3 id="effective-benchmarking-techniques">
+  Effective Benchmarking Techniques
+  <a class="heading-link" href="#effective-benchmarking-techniques">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<p>Reliable microbenchmarks (measuring small operations like adding an order) require care to avoid misleading results:</p>
+<ul>
+<li><strong>Warm-up and steady state</strong>: Run the operation millions of times to warm caches and JIT (if applicable).</li>
+<li><strong>Isolate the code</strong>: Benchmark the specific function (e.g., handle(order)) in a loop, not the entire application.</li>
+<li><strong>Prevent compiler over-optimization</strong> Use <code>benchmark::DoNotOptimize</code> or consume results to avoid dead code elimination.</li>
+<li><strong>Statistical rigor</strong> Run multiple iterations, report mean/median/min/max, and standard deviation.</li>
+<li><strong>Realistic workloads</strong> Use traces from real market data (e.g., NASDAQ ITCH feeds) or synthetic generators mimicking order arrival rates.</li>
+<li><strong>Control the environment</strong> Pin threads to cores, disable frequency scaling, use performance governors, isolate from OS noise.</li>
+<li><strong>Measure relevant metrics</strong>:
+<ul>
+<li>Latency (ns per operation)</li>
+<li>Throughput (orders/sec)</li>
+<li>Memory allocation rate</li>
+<li>Cache misses (via perf or VTune if applicable)</li>
+</ul>
+</li>
+</ul>
+<p>Common pitfalls:</p>
+<ul>
+<li>Benchmarking in Debug mode.</li>
+<li>Measuring wall-clock time without high-resolution timers</li>
+<li>Ignoring branch misprediction in random price accesses</li>
+</ul>
+<h3 id="example-with-google-benchmark">
+  Example with google benchmark
+  <a class="heading-link" href="#example-with-google-benchmark">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#66d9ef">namespace</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>    std<span style="color:#f92672">::</span>random_device rd;  <span style="color:#75715e">// Will be used to obtain a seed for the random number engine
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span><span style="color:#75715e"></span>    std<span style="color:#f92672">::</span>mt19937 gen(rd()); <span style="color:#75715e">// Standard mersenne_twister_engine seeded with rd()
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span>    <span style="color:#66d9ef">inline</span> <span style="color:#66d9ef">auto</span> <span style="color:#a6e22e">prepare_ring_order</span>(<span style="color:#66d9ef">const</span> libmarket<span style="color:#f92672">::</span>book<span style="color:#f92672">::</span>Ring <span style="color:#f92672">&amp;</span>book, benchmark<span style="color:#f92672">::</span>State <span style="color:#f92672">&amp;</span>state) <span style="color:#f92672">-&gt;</span> libmarket<span style="color:#f92672">::</span>book<span style="color:#f92672">::</span>Ring<span style="color:#f92672">::</span>Order
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>        std<span style="color:#f92672">::</span>uniform_int_distribution<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">uint64_t</span><span style="color:#f92672">&gt;</span> dis(<span style="color:#ae81ff">1</span>, std<span style="color:#f92672">::</span>numeric_limits<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">uint16_t</span><span style="color:#f92672">&gt;::</span>max());
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>        <span style="color:#66d9ef">return</span> libmarket<span style="color:#f92672">::</span>book<span style="color:#f92672">::</span>Ring<span style="color:#f92672">::</span>Order{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>            .type <span style="color:#f92672">=</span> <span style="color:#66d9ef">static_cast</span><span style="color:#f92672">&lt;</span>libmarket<span style="color:#f92672">::</span>market_data<span style="color:#f92672">::</span>OrderType<span style="color:#f92672">&gt;</span>(dis(gen) <span style="color:#f92672">%</span> <span style="color:#ae81ff">2</span>),
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>            .price <span style="color:#f92672">=</span> <span style="color:#66d9ef">static_cast</span><span style="color:#f92672">&lt;</span>libmarket<span style="color:#f92672">::</span>market_data<span style="color:#f92672">::</span>OrderPrice<span style="color:#f92672">&gt;</span>(dis(gen) <span style="color:#f92672">%</span> book.depth()),
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>            .quantity <span style="color:#f92672">=</span> <span style="color:#66d9ef">static_cast</span><span style="color:#f92672">&lt;</span>libmarket<span style="color:#f92672">::</span>market_data<span style="color:#f92672">::</span>OrderQuantity<span style="color:#f92672">&gt;</span>(dis(gen)),
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>            .action <span style="color:#f92672">=</span> <span style="color:#66d9ef">static_cast</span><span style="color:#f92672">&lt;</span>libmarket<span style="color:#f92672">::</span>market_data<span style="color:#f92672">::</span>OrderAction<span style="color:#f92672">&gt;</span>(dis(gen) <span style="color:#f92672">%</span> <span style="color:#ae81ff">3</span>),
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>        };
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>}
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">BM_Ring_get_best_bid</span>(benchmark<span style="color:#f92672">::</span>State <span style="color:#f92672">&amp;</span>state)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>{
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>    <span style="color:#66d9ef">auto</span> book <span style="color:#f92672">=</span> libmarket<span style="color:#f92672">::</span>book<span style="color:#f92672">::</span>Ring(<span style="color:#ae81ff">10</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span>    <span style="color:#66d9ef">auto</span> order <span style="color:#f92672">=</span> prepare_ring_order(book, state);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span>    order.action <span style="color:#f92672">=</span> libmarket<span style="color:#f92672">::</span>market_data<span style="color:#f92672">::</span>OrderAction<span style="color:#f92672">::</span>New;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span>    order.type <span style="color:#f92672">=</span> libmarket<span style="color:#f92672">::</span>market_data<span style="color:#f92672">::</span>OrderType<span style="color:#f92672">::</span>Bid;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span>    book.handle(order);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">auto</span> _ : state)
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span>    {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span>        std<span style="color:#f92672">::</span>ignore <span style="color:#f92672">=</span> book.get_best_bid();
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span><span>    state.SetItemsProcessed(<span style="color:#ae81ff">1</span> <span style="color:#f92672">*</span> state.iterations());
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span><span>}
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span><span>BENCHMARK(BM_Ring_get_best_bid);
+</span></span></code></pre></div><p>You can then use perf to compute metrics:</p>
+<ul>
+<li><strong>cycles</strong>: number of CPU cycles executed.</li>
+<li><strong>instructions</strong>: number of instructions executed.</li>
+<li><strong>branches</strong>: number of branch instructions executed&quot;</li>
+<li><strong>cache-referneces</strong> : memory accesses to the cache.</li>
+<li><strong>cache-misses</strong>: memory accesses that require fetchingdata from a higher-level cache or main memory.</li>
+<li><strong>faults</strong>: number of page faults, which occur when a process tries to access a page of memory that is not currently mapped in its address space.</li>
+<li><strong>migrations</strong>: number of times a task is migrated between CPU cores.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>perf stat -e cycles,instructions,branches,branch-misses,cache-references,cache-misses,faults,migrations ./build/libmarket-benchmark/libmarket_benchmark --benchmark_filter<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$@<span style="color:#e6db74">*&#34;</span>
+</span></span></code></pre></div>
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+    </div>
+
+    <footer class="footer">
+  <section class="container">
+    
+  </section>
+</footer>
+
+  </main>
+
+  
+
+  
+  
+  <script src="/js/coder.min.236049395dc3682fb2719640872958e12f1f24067bb09c327b233e6290c7edac.js" integrity="sha256-I2BJOV3DaC&#43;ycZZAhylY4S8fJAZ7sJwyeyM&#43;YpDH7aw="></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+
+</html>
